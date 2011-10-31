@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+  html { height: 100% }
+  body { height: 100%; margin: 0; padding: 0 }
+  #map_canvas { height: 100% }
+</style>
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true"></script>
+
+<script type="text/javascript" src="FilterSettings.js"></script>
+
+<script type="text/javascript">
+	
+	var defaultLatlng = new google.maps.LatLng(38.895112,-77.036366);
+	var currentInfoWin, map, layerOSHA_food, layerOSHA_retail, layerOSHA_hospitality, layerWHD_food;
+	var offset = new google.maps.Size(0,-20);
+	var pageLoaded = false;
+	var yelpFoodMarkers = [];
+	var yelpRetailMarkers = [];
+	var yelpHospitalityMarkers = [];
+	//var localZoom = 14;
+	var localZoom = 13;
+	
+	function setYelpMarkers(industry,icon,array,evt,searchName) {
+		for (var i in evt.businesses) {
+			
+			var displayBiz = false;
+			
+			var bizName = evt.businesses[i].name;
+			bizName = bizName.toUpperCase();
+			if (searchName) {
+				searchName = searchName.toUpperCase();	
+				if (bizName.search(searchName) != -1) {
+					displayBiz = true;
+				}
+			} else {
+				displayBiz = true;
+			}
+			
+			if (displayBiz) {
+				var bizLoc = new google.maps.LatLng(evt.businesses[i].location.coordinate.latitude, evt.businesses[i].location.coordinate.longitude);
+	    		
+	    		var industryIcon = '';
+	    		
+	    		if (industry == 'Food') {
+	    			industryIcon = 'food_gray_matte.png';
+	    		} else if (industry == 'Retail') {
+	    			industryIcon = 'retail_gray_matte.png';
+	    		} else {
+	    			industryIcon = 'hospitality_gray_matte.png';
+	    		} 
+	    		
+	    		var displayAddress = '';
+				if (evt.businesses[i].location.address && evt.businesses[i].location.address !='') {
+					displayAddress = displayAddress + evt.businesses[i].location.address + ', ';
+				} 
+				if (evt.businesses[i].location.city && evt.businesses[i].location.city !='') {
+					displayAddress = displayAddress + evt.businesses[i].location.city + ', ';
+				}
+				if (evt.businesses[i].location.state_code && evt.businesses[i].location.state_code !='') {
+					displayAddress = displayAddress + evt.businesses[i].location.state_code;
+				}
+				
+				var name = escape(evt.businesses[i].name);
+				var address = escape(evt.businesses[i].location.address);
+				var city = escape(evt.businesses[i].location.city);
+	    		
+		    	var infoWindowHtml = "<div style='font-family: sans-serif;  '>" +
+					"<div><a style='color:blue; text-decoration:underline; font-weight:bold; font-size:15px;' onclick='Ti.App.fireEvent(\"yelpMarkerClicked\", {" +
+					"industry: \"" + industry + "\"," +
+					"name: \"" + name + "\"," +
+					"image_url: \"" + evt.businesses[i].image_url + "\"," +
+					"address: \"" + address + "\"," +
+					"city: \"" + city + "\"," +
+					"state_code: \"" + evt.businesses[i].location.state_code + "\"," +
+					"postal_code: \"" + evt.businesses[i].location.postal_code + "\"," +
+					"display_phone: \"" + evt.businesses[i].display_phone + "\"," +
+					"phone: \"" + evt.businesses[i].phone + "\"," +
+					"rating_img_url: \"" + evt.businesses[i].rating_img_url + "\"," +
+					"review_count: \"" + evt.businesses[i].review_count + "\"," +
+					"mobile_url: \"" + evt.businesses[i].mobile_url + "\" });'>" +
+					evt.businesses[i].name + "</a></div>" +
+					"<div style='font-size:12px; color: #999999;'><img style='vertical-align: middle; padding-right: 5px' width='22' height='22' src='" + industryIcon + "'><img style='vertical-align: middle;' width='84' height='17' src='" + evt.businesses[i].rating_img_url + "'>" +
+					" " + evt.businesses[i].review_count + " reviews</div>" +
+					"<div style='color: #666666; font-size:13px;'>" + displayAddress + "</div>" +
+					"<div style='font-size:12px; font-style:italic; color: #999999; padding-top: 5px;'>(yelp.com)</div>" +
+					"</div>";
+				
+		    	var marker = new google.maps.Marker({
+			        position: bizLoc,
+			        map: map,
+			        html: infoWindowHtml,
+			        industry: industry,
+			        icon: icon
+			    });
+			    
+			    google.maps.event.addListener(marker, 'click', function(evt) {
+			    	if (currentInfoWin) {
+						currentInfoWin.close();
+					};
+					
+					currentInfoWin = new google.maps.InfoWindow({
+				        content: this.html, position:evt.latLng, pixelOffset:offset
+				    });
+					
+					currentInfoWin.open(map);
+			    }); 
+			    
+			    array.push(marker);		
+			}
+		
+	    }
+	}
+    
+    function onOshaLayerClick(evt, industry) {
+    	if (currentInfoWin) {
+			currentInfoWin.close();
+		};
+		
+		var name = escape(evt.row.estab_name.value);
+		var address = escape(evt.row.site_address.value);
+		var city = escape(evt.row.site_city.value);
+		var industryIcon, violation;
+		
+		if (evt.row.icon_name1.value == 'blu_blank' || evt.row.icon_name1.value == 'blu_diamond') {
+			industry = 'Retail';
+		} else if (evt.row.icon_name1.value == 'purple_blank' || evt.row.icon_name1.value == 'purple_diamond') {
+			industry = 'Hospitality';
+		} else {
+			industry = 'Food';
+		}
+		
+		if (evt.row.osha_violation_indicator.value == 1) {
+			
+			violation = 'Past violation';
+			if (industry == 'Food') {
+				industryIcon = 'food_red_matte.png';
+			} else if (industry == 'Retail') {
+				industryIcon = 'retail_red_matte.png';
+			} else {
+				industryIcon = 'hospitality_red_matte.png';
+			}
+		}
+		else {
+			
+			violation = 'No violations';
+			if (industry == 'Food') {
+				industryIcon = 'food_green_matte.png';
+			} else if (industry == 'Retail') {
+				industryIcon = 'retail_green_matte.png';
+			} else {
+				industryIcon = 'hospitality_green_matte.png';
+			}
+		}
+		
+		var infoWindowHtml = "<div style='font-family: sans-serif;  '>" +
+			"<div style='padding-bottom: 2px;'><a style='color:blue; text-decoration:underline; font-weight:bold; font-size:15px; ' onclick='Ti.App.fireEvent(\"oshaMarkerClicked\", {" +
+			"industry: \"" + industry + "\"," +
+			"activity_nr: \"" + evt.row.activity_nr.value + "\"," +
+			"estab_name: \"" + name + "\"," +
+			"osha_violation_indicator: \"" + evt.row.osha_violation_indicator.value + "\"," + 
+			//"insp_type: \"" + evt.row.insp_type.value + "\"," + 
+			"total_current_penalty: \"" + evt.row.total_current_penalty.value + "\"," + 
+			"serious_violations: \"" + evt.row.serious_violations.value + "\"," + 
+			"total_violations: \"" + evt.row.total_violations.value + "\"," + 
+			"yahoo_lat: \"" + evt.row.yahoo_lat.value + "\"," + 
+			"yahoo_lon: \"" + evt.row.yahoo_lon.value + "\"," + 
+			"site_address: \"" + address + "\"," + 
+			"site_city: \"" + city + "\"," + 
+			"site_state: \"" + evt.row.site_state.value + "\"," +
+			"site_zip: \"" + evt.row.site_zip.value + "\" });'>" +
+			evt.row.estab_name.value + "</a></div>" +
+			"<div style='font-size:13px; '><img style='vertical-align: middle;' width='22' height='22' src='" + industryIcon + "'>" +
+			" " + violation + "</div>" +
+			"<div style='color: #666666; font-size:13px;'>" + evt.row.site_address.value + ", " + evt.row.site_city.value + ", " + evt.row.site_state.value + "</div>" +
+			"<div style='font-size:12px; font-style:italic; color: #999999; padding-top: 5px;'>(Dept of Labor/OSHA)</div>" +
+			"</div>";
+		
+		currentInfoWin = new google.maps.InfoWindow({content:infoWindowHtml,position:evt.latLng,pixelOffset:offset});
+		currentInfoWin.open(map);
+    }
+    
+    function onWhdLayerClick(evt, industry) {
+		if (currentInfoWin) {
+			currentInfoWin.close();
+		};
+		
+		var name = escape(evt.row.trade_nm.value);
+		var address = escape(evt.row.street_addr_1_txt.value);
+		var city = escape(evt.row.city_nm.value);
+		var naics_description = escape(evt.row.naics_code_description.value);
+		var start_date = evt.row.findings_start_date.value;
+		var end_date = evt.row.findings_end_date.value;
+		var flsa_repeat_violator = escape(evt.row.flsa_repeat_violator.value);
+		
+		start_date = start_date.substr(6,10);
+		var iFindingsStartDate = parseInt(start_date);
+		var findings_start_date = new Date(iFindingsStartDate * 1000);
+		var month = parseInt(findings_start_date.getUTCMonth()) + 1;
+		
+		start_date = (month < 10 ? '0' : '') + month + '/' + 
+			(findings_start_date.getUTCDate() < 10 ? '0' : '') + findings_start_date.getUTCDate() + '/' + 
+			(findings_start_date.getUTCFullYear() < 10 ? '0' : '') + findings_start_date.getUTCFullYear();
+		start_date = escape(start_date);
+		
+		end_date = end_date.substr(6,10);
+		var iFindingsStartDate = parseInt(end_date);
+		var findings_start_date = new Date(iFindingsStartDate * 1000);
+		var month = parseInt(findings_start_date.getUTCMonth()) + 1;
+		
+		end_date = (month < 10 ? '0' : '') + month + '/' + 
+			(findings_start_date.getUTCDate() < 10 ? '0' : '') + findings_start_date.getUTCDate() + '/' + 
+			(findings_start_date.getUTCFullYear() < 10 ? '0' : '') + findings_start_date.getUTCFullYear();
+		end_date = escape(end_date);
+		
+		var industryIcon, violation;
+		
+		if (evt.row.icon_name1.value == 'blu_blank' || evt.row.icon_name1.value == 'blu_diamond') {
+			industry = 'Retail';
+		} else if (evt.row.icon_name1.value == 'purple_blank' || evt.row.icon_name1.value == 'purple_diamond') {
+			industry = 'Hospitality';
+		} else {
+			industry = 'Food';
+		}
+		
+		if (evt.row.whd_violation_indicator.value == 1) {
+			
+			violation = 'Past violation';
+			if (industry == 'Food') {
+				industryIcon = 'food_red_matte.png';
+			} else if (industry == 'Retail') {
+				industryIcon = 'retail_red_matte.png';
+			} else {
+				industryIcon = 'hospitality_red_matte.png';
+			}
+		}
+		else {
+			violation = 'No violations';
+			if (industry == 'Food') {
+				industryIcon = 'food_green_matte.png';
+			} else if (industry == 'retail') {
+				industryIcon = 'retail_green_matte.png';
+			} else {
+				industryIcon = 'hospitality_green_matte.png';
+			}
+		}
+		
+		var infoWindowHtml = "<div class='googft-info-window' style='font-family: sans-serif'>" +
+			"<div style='padding-bottom: 2px;'><a style='color:blue; text-decoration:underline; font-weight:bold; font-size:15px;' onclick='Ti.App.fireEvent(\"whdMarkerClicked\", {" +
+			"industry: \"" + industry + "\"," +
+			"trade_nm: \"" + name + "\"," +
+			"naics_code_description: \"" + naics_description + "\"," +
+			"findings_start_date: \"" + start_date + "\"," +
+			"findings_end_date: \"" + end_date + "\"," +
+			
+			"flsa_violtn_cnt: \"" + evt.row.flsa_violtn_cnt.value + "\"," + 
+			"flsa_repeat_violator: \"" + evt.row.flsa_repeat_violator.value + "\"," + 
+			"flsa_bw_atp_amt: \"" + evt.row.flsa_bw_atp_amt.value + "\"," + 
+			"flsa_ee_atp_cnt: \"" + evt.row.flsa_ee_atp_cnt.value + "\"," + 
+			"flsa_mw_bw_atp_amt: \"" + evt.row.flsa_mw_bw_atp_amt.value + "\"," + 
+			"flsa_ot_bw_atp_amt: \"" + evt.row.flsa_ot_bw_atp_amt.value + "\"," + 
+			"flsa_15a3_bw_atp_amt: \"" + evt.row.flsa_15a3_bw_atp_amt.value + "\"," + 
+			"flsa_cmp_assd_amt: \"" + evt.row.flsa_cmp_assd_amt.value + "\"," + 
+			"flsa_cl_violtn_cnt: \"" + evt.row.flsa_cl_violtn_cnt.value + "\"," + 
+			"flsa_cl_minor_cnt: \"" + evt.row.flsa_cl_minor_cnt.value + "\"," + 
+			"flsa_cl_cmp_assd_amt: \"" + evt.row.flsa_cl_cmp_assd_amt.value + "\"," + 
+			
+			"yahoo_lat: \"" + evt.row.yahoo_lat.value + "\"," + 
+			"yahoo_lon: \"" + evt.row.yahoo_lon.value + "\"," + 
+			"street_addr_1_txt: \"" + address + "\"," + 
+			"city_nm: \"" + city + "\"," + 
+			"st_cd: \"" + evt.row.st_cd.value + "\"," +
+			"zip_cd: \"" + evt.row.zip_cd.value + "\" });'>" +
+			evt.row.trade_nm.value + "</a></div>" +
+			"<div style='font-size:13px; '><img style='vertical-align: middle;' width='22' height='22' src='" + industryIcon + "'>" +
+			" " + violation + "</div>" +
+			"<div style='color: #666666; font-size:13px;'>" + evt.row.street_addr_1_txt.value + ", " + evt.row.city_nm.value + ", " + evt.row.st_cd.value + "</div>" +
+			"<div style='font-size:12px; font-style:italic; color: #999999; padding-top: 5px;'>(Dept of Labor/WHD)</div>" +
+			"</div>";
+ 
+		currentInfoWin = new google.maps.InfoWindow({content:infoWindowHtml,position:evt.latLng,pixelOffset:offset});
+		currentInfoWin.open(map);
+	}
+	
+	function setLocalZoom() {
+		map.setZoom(localZoom);
+	}
+	
+	function getBoundsSWLatitude() {
+		return map.getBounds().getSouthWest().lat();
+	}
+	
+	function getBoundsSWLongitude() {
+		return map.getBounds().getSouthWest().lng();
+	}
+	
+	function getBoundsNELatitude() {
+		return map.getBounds().getNorthEast().lat();
+	}
+	
+	function getBoundsNELongitude() {
+		return map.getBounds().getNorthEast().lng();
+	}
+	
+	function getBounds() {
+		
+		return {sw_latitude:map.getBounds().getSouthWest().lat(),
+			sw_longitude:map.getBounds().getSouthWest().lng(),
+			ne_latitude:map.getBounds().getNorthEast().lat(),
+			ne_longitude:map.getBounds().getNorthEast().lng()};
+	}
+	
+	function getMapCenterLat() {
+		
+		return map.getCenter().lat();
+	}
+	
+	function getMapCenterLng() {
+		
+		return map.getCenter().lng();
+	}
+	
+	function setOSHALayer(layer,select, from, dolArea,dolInspections) {
+		var where = '';
+		
+		switch (dolArea) {
+		case FilterSettings.DOLAREA_LOCAL:
+			
+			var currentBounds = getBounds();
+			switch (dolInspections) {
+			case FilterSettings.INSPECTIONS_VIOLATIONS:
+				where = 
+					    'ST_INTERSECTS(col14, RECTANGLE(LATLNG(' + currentBounds.sw_latitude + ',' + currentBounds.sw_longitude + 
+					    '), LATLNG(' + currentBounds.ne_latitude + ',' + currentBounds.ne_longitude + '))) ' + 
+					    'AND osha_violation_indicator = 1';
+				break;
+			case FilterSettings.INSPECTIONS_NOVIOLATIONS:
+				where = 
+					    'ST_INTERSECTS(col14, RECTANGLE(LATLNG(' + currentBounds.sw_latitude + ',' + currentBounds.sw_longitude + 
+					    '), LATLNG(' + currentBounds.ne_latitude + ',' + currentBounds.ne_longitude + '))) ' + 
+					    'AND osha_violation_indicator = 0';
+				
+				break;
+			case FilterSettings.INSPECTIONS_ALL:
+				where = 
+					    'ST_INTERSECTS(col14, RECTANGLE(LATLNG(' + currentBounds.sw_latitude + ',' + currentBounds.sw_longitude + 
+					    '), LATLNG(' + currentBounds.ne_latitude + ',' + currentBounds.ne_longitude + '))) ';
+				break;	
+			}
+			break;
+		case FilterSettings.DOLAREA_NATIONAL:
+			switch (dolInspections) {
+			case FilterSettings.INSPECTIONS_VIOLATIONS:
+				where = 'osha_violation_indicator = 1';
+				break;
+			case FilterSettings.INSPECTIONS_NOVIOLATIONS:
+				where = 'osha_violation_indicator = 0';
+				break;
+			case FilterSettings.INSPECTIONS_ALL:
+				where = '';
+				break;	
+			}
+			break; 
+		}
+		
+		layer.setOptions({
+			query: {
+		        select: select,
+		    	from: from,
+			    where: where
+		    }
+		    
+		});
+		
+		layer.setMap(map);
+		
+	}
+	
+	function setWHDLayer(layer,select, from, dolArea,dolInspections) {
+		var where = '';
+		
+		switch (dolArea) {
+		case FilterSettings.DOLAREA_LOCAL:
+			
+			var currentBounds = getBounds();
+			switch (dolInspections) {
+			case FilterSettings.INSPECTIONS_VIOLATIONS:
+				where = 
+					    'ST_INTERSECTS(col22, RECTANGLE(LATLNG(' + currentBounds.sw_latitude + ',' + currentBounds.sw_longitude + 
+					    '), LATLNG(' + currentBounds.ne_latitude + ',' + currentBounds.ne_longitude + '))) ' + 
+					    'AND whd_violation_indicator=1';
+					    //'AND icon_name1 = \'\'';
+				break;
+			case FilterSettings.INSPECTIONS_NOVIOLATIONS:
+				where = 
+					    'ST_INTERSECTS(col22, RECTANGLE(LATLNG(' + currentBounds.sw_latitude + ',' + currentBounds.sw_longitude + 
+					    '), LATLNG(' + currentBounds.ne_latitude + ',' + currentBounds.ne_longitude + '))) ' + 
+					    'AND whd_violation_indicator=0';
+				
+				break;
+			case FilterSettings.INSPECTIONS_ALL:
+				where = 
+					    'ST_INTERSECTS(col22, RECTANGLE(LATLNG(' + currentBounds.sw_latitude + ',' + currentBounds.sw_longitude + 
+					    '), LATLNG(' + currentBounds.ne_latitude + ',' + currentBounds.ne_longitude + '))) ';
+				break;	
+			}
+			break;
+		case FilterSettings.DOLAREA_NATIONAL:
+			switch (dolInspections) {
+			case FilterSettings.INSPECTIONS_VIOLATIONS:
+				where = 'whd_violation_indicator=1';
+				break;
+			case FilterSettings.INSPECTIONS_NOVIOLATIONS:
+				where = 'whd_violation_indicator=0';
+				break;
+			case FilterSettings.INSPECTIONS_ALL:
+				where = '';
+				break;	
+			}
+			break; 
+		}
+		
+		layer.setOptions({
+			query: {
+		        select: select,
+		    	from: from,
+			    where: where
+		    }
+		    
+		});
+		
+		layer.setMap(map);
+	}
+	
+	function setLayerOSHAFood(where) {
+		layerOSHA_food.setOptions({
+			query: {
+		        select: 'col14',
+		    	from: 1361743,
+		    	where: where
+		    }  
+		});
+		layerOSHA_food.setMap(map);
+		//setOSHALayer(layerOSHA_food,'col14','1361743',dolArea,dolInspections);
+	}
+	
+	function setLayerOSHARetail(where) {
+		layerOSHA_retail.setOptions({
+			query: {
+		        select: 'col14',
+		    	from: 1361563,
+		    	where: where
+		    }  
+		});
+		layerOSHA_retail.setMap(map);
+		//setOSHALayer(layerOSHA_retail,'col14','1361563',dolArea,dolInspections);
+	}
+	
+	function setLayerOSHAHospitality(where) {
+		layerOSHA_hospitality.setOptions({
+			query: {
+		        select: 'col14',
+		    	from: 1361744,
+		    	where: where
+		    }  
+		});
+		layerOSHA_hospitality.setMap(map);
+		//setOSHALayer(layerOSHA_hospitality,'col14','1361744',dolArea,dolInspections);
+	}
+	
+	function setLayerOSHAFull(where) {
+		layerOSHA_full.setOptions({
+			query: {
+		        select: 'col14',
+		    	from: 1482673,
+		    	where: where
+		    }  
+		});
+		layerOSHA_full.setMap(map);
+	}
+	
+	function setLayerWHDFood(where) {
+		layerWHD_food.setOptions({
+			query: {
+		        select: 'col22',
+		    	from: 1377910,
+		    	where: where
+		    }  
+		});
+		layerWHD_food.setMap(map);
+		//setWHDLayer(layerWHD_food,'col22','1377910',dolArea,dolInspections);
+	}
+	
+	function setLayerWHDRetail(where) {
+		layerWHD_retail.setOptions({
+			query: {
+		        select: 'col22',
+		    	from: 1377447,
+		    	where: where
+		    }  
+		});
+		layerWHD_retail.setMap(map);
+		//setWHDLayer(layerWHD_retail,'col22','1377447',dolArea,dolInspections);
+	}
+	
+	function setLayerWHDHospitality(where) {
+		layerWHD_hospitality.setOptions({
+			query: {
+		        select: 'col22',
+		    	from: 1377445,
+		    	where: where
+		    }  
+		});
+		layerWHD_hospitality.setMap(map);
+		//setWHDLayer(layerWHD_hospitality,'col22','1377445',dolArea,dolInspections);
+	}
+	
+	function setLayerWHDFull(where) {
+		layerWHD_full.setOptions({
+			query: {
+		        select: 'col22',
+		    	from: 1482571,
+		    	where: where
+		    }  
+		});
+		layerWHD_full.setMap(map);
+		
+	}
+	
+	function clearLayers() {
+		layerOSHA_food.setMap(null);
+		layerOSHA_retail.setMap(null);
+		layerOSHA_hospitality.setMap(null);
+		layerOSHA_full.setMap(null);
+		layerWHD_food.setMap(null);
+		layerWHD_retail.setMap(null);
+		layerWHD_hospitality.setMap(null);
+		layerWHD_full.setMap(null);
+	}
+	
+	function initialize() {
+		
+	  	currentInfoWin = null;
+		
+		map = new google.maps.Map(document.getElementById("map_canvas"), {
+	    	zoom: 13,
+	    	mapTypeId: google.maps.MapTypeId.ROADMAP,
+	    	center: defaultLatlng,
+	    	disableDefaultUI: true
+	    });	
+		
+	    google.maps.event.addListener(map, 'zoom_changed', function() {
+	    	if (map.getZoom() < 13) {
+	    		Ti.App.fireEvent('zoomChanged',{hideRedoButton: true});
+	    	} else {
+	    		Ti.App.fireEvent('zoomChanged',{hideRedoButton: false});
+	    	}	
+	    });
+	  	
+	    layerOSHA_food = new google.maps.FusionTablesLayer({suppressInfoWindows: true});
+		google.maps.event.addListener(layerOSHA_food, 'click', function(evt) {
+			onOshaLayerClick(evt,'Food');
+		});
+		
+		layerOSHA_hospitality = new google.maps.FusionTablesLayer({suppressInfoWindows: true});
+		google.maps.event.addListener(layerOSHA_hospitality, 'click', function(evt) {
+			onOshaLayerClick(evt,'Hospitality');
+		});
+		
+		layerOSHA_retail = new google.maps.FusionTablesLayer({suppressInfoWindows: true});
+		google.maps.event.addListener(layerOSHA_retail, 'click', function(evt) {
+			onOshaLayerClick(evt,'Retail');
+		});
+		layerOSHA_full = new google.maps.FusionTablesLayer({suppressInfoWindows: true});
+		google.maps.event.addListener(layerOSHA_full, 'click', function(evt) {
+			onOshaLayerClick(evt,'');
+		});
+		
+		layerWHD_food = new google.maps.FusionTablesLayer({suppressInfoWindows: true});
+		google.maps.event.addListener(layerWHD_food, 'click', function(evt) {
+			onWhdLayerClick(evt,'Food');
+		});   
+		
+		layerWHD_retail = new google.maps.FusionTablesLayer({suppressInfoWindows: true});
+		google.maps.event.addListener(layerWHD_retail, 'click', function(evt) {
+			onWhdLayerClick(evt,'Retail');
+		});   
+		
+		layerWHD_hospitality = new google.maps.FusionTablesLayer({suppressInfoWindows: true});
+		google.maps.event.addListener(layerWHD_hospitality, 'click', function(evt) {
+			onWhdLayerClick(evt,'Hospitality');
+		});   
+		
+		layerWHD_full = new google.maps.FusionTablesLayer({suppressInfoWindows: true});
+		google.maps.event.addListener(layerWHD_full, 'click', function(evt) {
+			onWhdLayerClick(evt,'');
+		});   
+		
+		// Init Food markers
+		setLayerOSHAFood('');
+		setLayerWHDFood('');
+			
+	}
+
+	Ti.App.addEventListener('setMapCenter',function(evt) {
+		var pos = new google.maps.LatLng(evt.lat, evt.lon);
+		map.setCenter(pos);
+	});
+	
+	Ti.App.addEventListener('clearYelpMarkers',function(evt) {
+		if (yelpFoodMarkers) {
+		    for (var i in yelpFoodMarkers) {
+		      yelpFoodMarkers[i].setMap(null);
+		    }
+		}
+		if (yelpRetailMarkers) {
+		    for (var i in yelpRetailMarkers) {
+		      yelpRetailMarkers[i].setMap(null);
+		    }
+		}
+		if (yelpHospitalityMarkers) {
+		    for (var i in yelpHospitalityMarkers) {
+		      yelpHospitalityMarkers[i].setMap(null);
+		    }
+		}
+		
+	});
+	
+	Ti.App.addEventListener('setYelpFoodMarkers',function(evt) {
+		setYelpMarkers('Food','yellow_bubble_yelp.png',yelpFoodMarkers,evt.response,evt.searchName);
+	});
+	
+	Ti.App.addEventListener('setYelpRetailMarkers',function(evt) {
+		setYelpMarkers('Retail','blue_bubble_yelp.png',yelpRetailMarkers,evt.response,evt.searchName);
+	});
+	
+	Ti.App.addEventListener('setYelpHospitalityMarkers',function(evt) {
+		setYelpMarkers('Hospitality','purple_bubble_yelp.png',yelpHospitalityMarkers,evt.response,evt.searchName);
+	});
+	
+</script>
+
+</head>
+<body onload="initialize()">
+  	
+  	<div id="map_canvas" style="width:100%; height:100%"></div>
+  	<!--
+  	<iframe width="500px" height="300px" scrolling="no"  src="http://www.google.com/fusiontables/embedviz?viz=MAP&q=select+col22+from+1361750+&h=false&lat=46.72948503627198&lng=-113.29415399999999&z=2&t=1&l=col22"></iframe>
+  	-->
+</body>
+</html>

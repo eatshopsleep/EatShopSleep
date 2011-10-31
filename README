@@ -1,4 +1,4 @@
-Eat Shop Sleep v.1.1 by R. Moore
+Eat Shop Sleep v.1.1
 
 Winning app for the U.S. Department of Labor informACTION App Challenge, 2011.
 
@@ -12,7 +12,32 @@ FEATURES
 - Browse customer reviews to see what's good in your city
 - View health/labor info from the Department of Labor﻿ on businesses on the U.S. map
 
+PLATFORM
+
+Developed for iOS using Appcelerator Titanium Mobile
+
 LICENSE
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License version 3, as published by the Free Software Foundation. See <http://www.gnu.org/licenses> for more details.
+Eat Shop Sleep is Copyright © 2011 by Rachel Moore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+----------------------------------
+
+Appcelerator, Appcelerator Titanium and associated marks and logos are 
+trademarks of Appcelerator, Inc. 
+
+Titanium is Copyright (c) 2009-2010 by Appcelerator, Inc. All Rights Reserved.
+
+Titanium is licensed under the Apache Public License (Version 2). Please
+see the LICENSE file for the full license.

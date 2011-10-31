@@ -1,0 +1,204 @@
+
+<!DOCTYPE html> 
+<!--
+  copyright (c) 2011 Google inc.
+ 
+  You are free to copy and use this sample.
+  License can be found here: http://code.google.com/apis/ajaxsearch/faq/#license
+--> 
+<html> 
+<head> 
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/> 
+ 
+<script type="text/javascript" src="http://www.google.com/jsapi"></script> 
+<script type="text/javascript" id="script"> 
+google.load('visualization', '1');
+
+var oshaCols = "SELECT activity_nr,estab_name,site_address,site_city,site_state,site_zip,total_current_penalty,osha_violation_indicator,serious_violations,total_violations,yahoo_lat,yahoo_lon ";
+
+var whdCols = "SELECT trade_nm,street_addr_1_txt,city_nm,st_cd,zip_cd,whd_violation_indicator,naics_code_description,flsa_violtn_cnt,flsa_repeat_violator,flsa_bw_atp_amt,flsa_ee_atp_cnt,flsa_mw_bw_atp_amt,flsa_ot_bw_atp_amt,flsa_15a3_bw_atp_amt,flsa_cmp_assd_amt,flsa_cl_violtn_cnt,flsa_cl_minor_cnt,flsa_cl_cmp_assd_amt,findings_start_date,findings_end_date,yahoo_lat,yahoo_lon ";
+
+var industry = '';
+
+var defaultLatlng = '38.895112,-77.036366';
+
+function setLayerOSHAFood(where,ll) {
+	var queryText = "\"" + oshaCols + "FROM 1361743 WHERE yahoo_lat NOT EQUAL TO \'\' ";
+	if (where != '') {
+		queryText = queryText + "AND " + where;
+		
+	} 
+	if (ll == '') {
+		queryText += " ORDER BY estab_name LIMIT 20\" ";
+	}
+	else {
+		queryText += " ORDER BY ST_DISTANCE(col14, LATLNG(" + ll + ")) LIMIT 20\" ";
+	}
+	
+	queryText = encodeURIComponent(queryText);
+	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
+	
+	//Titanium.App.fireEvent('show_indicator');
+	
+	query.send(function(response){
+		//Titanium.App.fireEvent('hide_indicator');
+		var json = response.getDataTable().toJSON();
+
+		Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: 'Food'});
+		
+	});
+}
+
+function setLayerOSHARetail(where,ll) {
+	var queryText = "\"" + oshaCols + "FROM 1361563 WHERE yahoo_lat NOT EQUAL TO \'\' ";
+	if (where != '') {
+		queryText = queryText + "AND " + where;
+		
+	} 
+	if (ll == '') {
+		queryText += " ORDER BY estab_name LIMIT 20\" ";
+	}
+	else {
+		queryText += " ORDER BY ST_DISTANCE(col14, LATLNG(" + ll + ")) LIMIT 20\" ";
+	}
+	
+	queryText = encodeURIComponent(queryText);
+	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
+	
+	//Titanium.App.fireEvent('show_indicator');
+	
+	query.send(function(response){
+		//Titanium.App.fireEvent('hide_indicator');
+		var json = response.getDataTable().toJSON();
+
+		Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: 'Retail'});
+		
+	});
+}
+
+function setLayerOSHAHospitality(where,ll) {
+	var queryText = "\"" + oshaCols + "FROM 1361744 WHERE yahoo_lat NOT EQUAL TO \'\' ";
+	if (where != '') {
+		queryText = queryText + "AND " + where;
+		
+	} 
+	if (ll == '') {
+		queryText += " ORDER BY estab_name LIMIT 20\" ";
+	}
+	else {
+		queryText += " ORDER BY ST_DISTANCE(col14, LATLNG(" + ll + ")) LIMIT 20\" ";
+	}
+	
+	queryText = encodeURIComponent(queryText);
+	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
+	
+	//Titanium.App.fireEvent('show_indicator');
+	query.send(function(response){
+		//Titanium.App.fireEvent('hide_indicator');
+		var json = response.getDataTable().toJSON();
+
+		Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: 'Hospitality'});
+	});
+}
+
+function setLayerWHDFood(where,ll) {
+	var queryText = "\"" + whdCols + "FROM 1377910 WHERE yahoo_lat NOT EQUAL TO \'\' ";
+	if (where != '') {
+		queryText = queryText + "AND " + where;
+		
+	} 
+	if (ll == '') {
+		queryText += " ORDER BY trade_nm LIMIT 20\" ";
+	}
+	else {
+		queryText += " ORDER BY ST_DISTANCE(col22, LATLNG(" + ll + ")) LIMIT 20\" ";
+	}
+	
+	queryText = encodeURIComponent(queryText);
+	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
+	
+	//Titanium.App.fireEvent('show_indicator');
+	query.send(function(response){
+		//Titanium.App.fireEvent('hide_indicator');
+		var json = response.getDataTable().toJSON();
+
+		Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: 'Food'});
+	});
+}
+
+function setLayerWHDRetail(where,ll) {
+	var queryText = "\"" + whdCols + "FROM 1377447 WHERE yahoo_lat NOT EQUAL TO \'\' ";
+	if (where != '') {
+		queryText = queryText + "AND " + where;
+		
+	} 
+	if (ll == '') {
+		queryText += " ORDER BY trade_nm LIMIT 20\" ";
+	}
+	else {
+		queryText += " ORDER BY ST_DISTANCE(col22, LATLNG(" + ll + ")) LIMIT 20\" ";
+	}
+	
+	queryText = encodeURIComponent(queryText);
+	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
+	
+	//Titanium.App.fireEvent('show_indicator');
+	query.send(function(response){
+		//Titanium.App.fireEvent('hide_indicator');
+		var json = response.getDataTable().toJSON();
+
+		Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: 'Retail'});
+	});
+}
+
+function setLayerWHDHospitality(where,ll) {
+	var queryText = "\"" + whdCols + "FROM 1377445 WHERE yahoo_lat NOT EQUAL TO \'\' ";
+	if (where != '') {
+		queryText = queryText + "AND " + where;
+		
+	} 
+	if (ll == '') {
+		queryText += " ORDER BY trade_nm LIMIT 20\" ";
+	}
+	else {
+		queryText += " ORDER BY ST_DISTANCE(col22, LATLNG(" + ll + ")) LIMIT 20\" ";
+	}
+	
+	queryText = encodeURIComponent(queryText);
+	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
+	
+	//Titanium.App.fireEvent('show_indicator');
+	query.send(function(response){
+	//	Titanium.App.fireEvent('hide_indicator');
+		var json = response.getDataTable().toJSON();
+		Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: 'Hospitality'});
+		
+	});
+}
+ 
+
+function getOSHAData(response) {
+	var json = response.getDataTable().toJSON();
+	Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: industry});
+	//Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA'});
+}
+
+function getWHDData(response) {
+	var json = response.getDataTable().toJSON();
+	Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: industry});
+	//Ti.App.fireEvent('getDOLList', {response: json, source:'WHD'});
+}
+
+function init() {
+	setLayerOSHAFood('', defaultLatlng);
+	setLayerWHDFood('', defaultLatlng);
+	
+	
+}
+
+</script> 
+</head> 
+<body onload="init();"> 
+
+</body> 
+</html> 
