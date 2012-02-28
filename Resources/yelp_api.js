@@ -27,8 +27,8 @@ var yelp_api = {
 		var auth = { 
 		  consumerKey: "KTesPRlMU1PRCM7KGn8O0w", 
 		  consumerSecret: "f5hYkyPHkn32ouo5QLZoZ4em9X0",
-		  accessToken: "3Vscd3jPrHW4v6dsb4F5zlwuFmVNvitx",
-		  accessTokenSecret: "yA1ObioufuYZq6rFkJJf7QExD_U",
+		  accessToken: "cZmV2bYBDgBySwAXjjUb1fxRjBRfdpq9",
+		  accessTokenSecret: "G_U0hdJ5l9xe3qvuyIrblHhoqxU",
 		  serviceProvider: { 
 		    signatureMethod: "HMAC-SHA1"
 		  }
