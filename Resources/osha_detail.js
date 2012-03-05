@@ -4,7 +4,9 @@ Ti.include('osha_report.js');
 Ti.include('biz_map.js');
 
 
-var winOSHA_detail = {};
+var winOSHA_detail = {
+	win: null
+};
 
 (function() {
     function padCents(amount) {
@@ -25,12 +27,16 @@ var winOSHA_detail = {};
         winOSHA_detail.win = Titanium.UI.createWindow({
         	orientationModes: orientationModes,
 			backgroundColor: 'white',
-			//title: osha_data.estab_name,
-			left: Titanium.Platform.displayCaps.platformWidth,
+			tabBarHidden: true,
+			navBarHidden: Ti.Platform.osname == 'android' ? true : false,
+			left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
 			barColor: headerColor
 		});
 		winOSHA_detail.win.addEventListener('close', function() {	
 			//winDOLMap.win.hideNavBar();
+		});
+		winOSHA_detail.win.addEventListener('android:back', function() {	
+			winOSHA_detail.win.close();
 		});
 		
 		winOSHA_detail.tableView = Titanium.UI.createTableView({
@@ -45,7 +51,8 @@ var winOSHA_detail = {};
 			height:'auto',
 			className: 'name',
 			backgroundColor: 'black',
-			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+			selectedBackgroundColor: 'black'
 		});
 		
 		var lblEstablishmentName = Ti.UI.createLabel({
@@ -57,7 +64,8 @@ var winOSHA_detail = {};
 			left: 10,
 			width: Titanium.Platform.displayCaps.platformWidth - 20,
 			textAlign: 'left',
-		    font:{fontSize:18, fontWeight:'bold'}
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 20 : 18, fontWeight:'bold'}
+		    font:{fontSize: '18dp', fontWeight:'bold'}
 		});
 		rowEstablishmentName.add(lblEstablishmentName);
 		winOSHA_detail.tableView.appendRow(rowEstablishmentName);
@@ -65,23 +73,46 @@ var winOSHA_detail = {};
 		var rowEstablishmentAddress = Ti.UI.createTableViewRow({
 			hasChild:true,
 			height:'auto',
-			className: 'address'
+			className: 'address',
+			selectedBackgroundColor: rowSelectionColor,
 		});
 		rowEstablishmentAddress.addEventListener('click', function(evt) {
-			tgSearch.activeTab.open(winBizMap.create(osha_data.site_address, osha_data.site_city, osha_data.site_state),{animated:true});
-			winDOLMap.win.barColor = headerColor;
+			if (Ti.Platform.osname == 'android') {
+				winBizMap.create(osha_data.site_address, osha_data.site_city, osha_data.site_state).open();
+			} else {
+				tgSearch.activeTab.open(winBizMap.create(osha_data.site_address, osha_data.site_city, osha_data.site_state),{animated:true});
+				winDOLMap.win.barColor = headerColor;	
+			}
+			
 		});
 		
-		var wvBizMap = Ti.UI.createWebView({
-			//backgroundImage: 'restaurant_icon.gif',
-			url: 'http://maps.googleapis.com/maps/api/staticmap?&markers=color:blue|' + osha_data.yahoo_lat + ',' + osha_data.yahoo_lon + '&zoom=14&scale=2&size=200x200&sensor=false',
-			top: 10,
-			height: 100,
-			left: 10,
-			width: 100,
-			borderColor: 'gray',
-			bottom: 10
-		});
+		var wvBizMap;
+		if (Ti.Platform.osname == 'android') {
+			wvBizMap = Ti.UI.createImageView({
+				image: 'http://maps.googleapis.com/maps/api/staticmap?&markers=color:blue|' + osha_data.yahoo_lat + ',' + osha_data.yahoo_lon + '&zoom=14&scale=1&size=100x100&sensor=false',
+				top: 10,
+				height: 100,
+				left: 10,
+				width: 100,
+				borderColor: Ti.Platform.osname == 'android' ? 'black' : 'gray',
+				borderWidth: 1,
+				bottom: 10,
+				backgroundColor: 'white',
+				touchEnabled: false
+			});
+		} else {
+			wvBizMap = Ti.UI.createWebView({				
+				url: 'http://maps.googleapis.com/maps/api/staticmap?&markers=color:blue|' + osha_data.yahoo_lat + ',' + osha_data.yahoo_lon + '&zoom=14&scale=2&size=200x200&sensor=false',
+				top: 10,
+				height: 100,
+				left: 10,
+				width: 100,
+				borderColor: Ti.Platform.osname == 'android' ? 'black' : 'gray',
+				borderWidth: 1,
+				bottom: 10,
+				backgroundColor: 'white'
+			});
+		}
 		rowEstablishmentAddress.add(wvBizMap);
 		
 		var lblAddress = Ti.UI.createLabel({
@@ -92,16 +123,20 @@ var winOSHA_detail = {};
 			//height: 110,
 			//height: 'auto',
 			bottom: 10,
-		    font:{fontSize:14}
+			color: 'black',
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14},
+		    font:{fontSize: '14dp'},
+		    touchEnabled: false
 		});
 		rowEstablishmentAddress.add(lblAddress);
 		winOSHA_detail.tableView.appendRow(rowEstablishmentAddress);
 		
 		var rowOSHAHeader = Ti.UI.createTableViewRow({
-			height: 'auto',
+			height: Ti.Platform.osname == 'android' ? 40 : 'auto',
 			className: 'section_header',
 			backgroundColor: headerColor,
-			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+			selectedBackgroundColor: rowSelectionColor
 		});
 		
 		var lblOSHA = Ti.UI.createLabel({
@@ -111,7 +146,8 @@ var winOSHA_detail = {};
 			bottom: 5,
 			height: 'auto',
 			width: 'auto',
-		    font:{fontSize:14, fontWeight:'bold'},
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 18 : 16, fontWeight:'bold'},
+		    font:{fontSize: '16dp', fontWeight:'bold'},
 		    textAlign:'left',
 		    color: 'white',
 		});
@@ -121,7 +157,8 @@ var winOSHA_detail = {};
 		var rowOSHADetail = Ti.UI.createTableViewRow({
 			height:'auto',
 			className: 'osha_detail',
-			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+			selectedBackgroundColor: 'white'
 		});
 		
 		var lblInViolation = Ti.UI.createLabel({
@@ -131,7 +168,9 @@ var winOSHA_detail = {};
 			left: 117,
 			right: 10,
 			textAlign: 'left',
-		    font:{fontSize:18, fontWeight:'bold'}
+			color: 'black',
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 20 : 18, fontWeight:'bold'}
+		    font:{fontSize: '18dp', fontWeight:'bold'},
 		});
 		rowOSHADetail.add(lblInViolation);
 		
@@ -142,12 +181,12 @@ var winOSHA_detail = {};
 			width: 100
 		});
 		if (osha_data.industry == 'Food') {
-			imgInViolation.image = 'food_green.png';
+			imgInViolation.image = 'images/food_green.png';
 		}
 		else if (osha_data.industry == 'Retail') {
-			imgInViolation.image = 'retail_green.png';
+			imgInViolation.image = 'images/retail_green.png';
 		} else {
-			imgInViolation.image = 'hospitality_green.png';
+			imgInViolation.image = 'images/hospitality_green.png';
 		}
 		rowOSHADetail.add(imgInViolation);
         
@@ -155,12 +194,12 @@ var winOSHA_detail = {};
 			
 			lblInViolation.text = 'Past Violation';
 			if (osha_data.industry == 'Food') {
-				imgInViolation.image = 'food_red.png';
+				imgInViolation.image = 'images/food_red.png';
 			}
 			else if (osha_data.industry == 'Retail') {
-				imgInViolation.image = 'retail_red.png';
+				imgInViolation.image = 'images/retail_red.png';
 			} else {
-				imgInViolation.image = 'hospitality_red.png';
+				imgInViolation.image = 'images/hospitality_red.png';
 			}
 			
 			var penalties = '', serious_violations = '', total_violations = '';
@@ -193,73 +232,40 @@ var winOSHA_detail = {};
 				left: 117,
 				height: 'auto',
 				textAlign: 'left',
-				font:{fontSize:14}
+				color: 'black',
+				//font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14}
+				font:{fontSize: '14dp'}
 			});
 			rowOSHADetail.add(lblOSHADetail);
-			/*
-			var caseType = '';
 			
-			switch (osha_data.insp_type.toUpperCase()) {
-			case 'A':
-				caseType = 'Accident';
-				break;
-			case 'B':
-				caseType = 'Complaint';
-				break;
-			case 'C':
-				caseType = 'Referral';
-				break;
-			case 'D':
-				caseType = 'Monitoring';
-				break;
-			case 'E':
-				caseType = 'Variance';
-				break;
-			case 'F':
-				caseType = 'FollowUp';
-				break;
-			case 'G':
-				caseType = 'Unprog Rel';
-				break;
-			case 'H':
-				caseType = 'Planned';
-				break;
-			case 'I':
-				caseType = 'Prog Related';
-				break;
-			case 'J':
-				caseType = 'Unprog Other';
-				break;
-			case 'K':
-				caseType = 'Prog Other';
-				break;
-			case 'L':
-				caseType = 'Other';
-				break;	
-			}
-			*/
 			
 		}
 		winOSHA_detail.tableView.appendRow(rowOSHADetail);
 		
 		var rowSource = Ti.UI.createTableViewRow({
 			hasChild: true,
-			height: 'auto',
+			height: Ti.Platform.osname == 'android' ? 40 : 'auto',
 			className: 'section_footer',
-			
+			selectedBackgroundColor: rowSelectionColor,
 		});
 		rowSource.addEventListener('click', function(evt) {
-			tgSearch.activeTab.open(winOSHAReport.create(osha_data.activity_nr),{animated:true});
+			if (Ti.Platform.osname == 'android') {
+				winOSHAReport.create(osha_data.activity_nr).open();
+			} else {
+				tgSearch.activeTab.open(winOSHAReport.create(osha_data.activity_nr),{animated:true});
+			}
+			
 			winDOLMap.win.barColor = headerColor;
 		});
 		
 		var imgDolLogo = Titanium.UI.createImageView({
 			//image:'DoLabor_seal_small.gif',
-			image:'osha_logo_small.png',
+			image:'images/osha_logo_small.png',
 			height: 18,
 			width: 58,
 			right: 5,
-			borderRadius: 3
+			borderRadius: 3,
+			touchEnabled: false
 		});
 		rowSource.add(imgDolLogo);
 		
@@ -272,18 +278,21 @@ var winOSHA_detail = {};
 			textAlign: 'right',
 			//right: 45,
 			right: imgDolLogo.width + 10,
-		    font:{fontSize:14},
-		    color: 'gray'
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14},
+		    font:{fontSize: '14dp'},
+		    color: 'gray',
+		    touchEnabled: false
 		});
 		rowSource.add(lblSource);
 		
 		winOSHA_detail.tableView.appendRow(rowSource);
 		
 		var rowContactDOLHeader = Ti.UI.createTableViewRow({
-			height: 'auto',
+			height: Ti.Platform.osname == 'android' ? 40 : 'auto',
 			className: 'section_header',
 			backgroundColor: headerColor,
-			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+			selectedBackgroundColor: rowSelectionColor
 		});
 		
 		var lblContactDOLHeader = Ti.UI.createLabel({
@@ -293,7 +302,8 @@ var winOSHA_detail = {};
 			bottom: 5,
 			height: 'auto',
 			width: 'auto',
-		    font:{fontSize:14, fontWeight:'bold'},
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 18 : 16, fontWeight:'bold'},
+		    font:{fontSize: '16dp', fontWeight:'bold' },
 		    textAlign:'left',
 		    color: 'white',
 		});
@@ -304,11 +314,27 @@ var winOSHA_detail = {};
 			hasChild: true,
 			height: 'auto',
 			className: 'section_footer',
-			
+			selectedBackgroundColor: rowSelectionColor,
 		});
 		rowContactDOL.addEventListener('click', function(evt) {
-			tgSearch.activeTab.open(winAction.createNavWin(),{animated:true});
+			if (Ti.Platform.osname == 'android') {
+				winAction.createNavWin().open();
+			} else {
+				tgSearch.activeTab.open(winAction.createNavWin(),{animated:true});	
+			}
+			
 		});
+		
+		var imgDolLogo = Titanium.UI.createImageView({
+			image:'DoLabor_seal_small.gif',
+			height: 32,
+			width: 32,
+			right: 5,
+			top: 5,
+			bottom: 5,
+			touchEnabled: false
+		});
+		rowContactDOL.add(imgDolLogo);
 		
 		var lblContactDOL = Ti.UI.createLabel({
 			text: 'Contact the Dept of Labor',
@@ -317,30 +343,23 @@ var winOSHA_detail = {};
 			bottom: 5,
 			height: 'auto',
 			width: 'auto',
-		    font:{fontSize:14, fontWeight:'normal'},
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14, fontWeight:'normal'},
+		    font:{fontSize: '14dp'},
 		    textAlign:'left',
 		    color: 'black',
+		    touchEnabled: false
 		});
 		rowContactDOL.add(lblContactDOL);
 		
-		var imgDolLogo = Titanium.UI.createImageView({
-			image:'DoLabor_seal_small.gif',
-			height: 32,
-			width: 32,
-			right: 5,
-			top: 5,
-			bottom: 5
-		});
-		rowContactDOL.add(imgDolLogo);
 		winOSHA_detail.tableView.appendRow(rowContactDOL);
 		
 		yelp_api.searchRequest(osha_data.estab_name, osha_data.site_address, osha_data.site_zip, null, null,
 			function(response) {    
-			    
+			    var jsonResponse = JSON.parse(response);
 			    // Use Yelp Data?
-			    if (response.businesses.length > 0) {
+			    if (jsonResponse.businesses.length > 0) {
 
-			    	var yelp_street_num = response.businesses[0].location.address[0];
+			    	var yelp_street_num = jsonResponse.businesses[0].location.address[0];
 				    yelp_street_num = yelp_street_num.split(' ',1);
 				    yelp_street_num = yelp_street_num[0];
 				    
@@ -350,17 +369,20 @@ var winOSHA_detail = {};
 				    
 			    	if (yelp_street_num == dol_street_num) {
 			    		
-			    		if (response.businesses[0].image_url) {
+			    		if (jsonResponse.businesses[0].image_url) {
 			    			var imgEstablishment = Titanium.UI.createImageView({
-			    				image:response.businesses[0].image_url,
+			    				image:jsonResponse.businesses[0].image_url,
 								top: 10,
 								height: 100,
 								left:10,
 								width: 100,
-								borderColor: 'gray',
-								bottom: 1
+								borderColor: Ti.Platform.osname == 'android' ? null : 'gray',
+								bottom: 1,
+								backgroundColor: 'white'
 							});
-			    			rowEstablishmentAddress.remove(wvBizMap);
+							if (Ti.Platform.osname != 'android') {
+			    				rowEstablishmentAddress.remove(wvBizMap);
+			    			}
 							rowEstablishmentAddress.add(imgEstablishment);
 						}
 						else {
@@ -369,20 +391,22 @@ var winOSHA_detail = {};
 						lblAddress.bottom = 1;
 						
 						var rowCallHeader = Ti.UI.createTableViewRow({
-							height: 'auto',
+							height: Ti.Platform.osname == 'android' ? 40 : 'auto',
 							className: 'section_header',
 							backgroundColor: headerColor,
-							selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+							selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+							selectedBackgroundColor: rowSelectionColor
 						});
 						
 						var lblCall = Ti.UI.createLabel({
 							text: 'Call',
-							left: 5,
+							left: 10,
 							top: 5,
 							bottom: 5,
 							height: 'auto',
 							width: 'auto',
-						    font:{fontSize:14, fontWeight:'bold'},
+						    //font:{fontSize: Ti.Platform.osname == 'android' ? 18 : 16, fontWeight:'bold'},
+						    font:{fontSize: '16dp', fontWeight:'bold'},
 						    textAlign:'left',
 						    color: 'white',
 						});
@@ -390,21 +414,21 @@ var winOSHA_detail = {};
 						winOSHA_detail.tableView.insertRowAfter(1,rowCallHeader);
 						
 						var rowPhone = Ti.UI.createTableViewRow({
-							height: 'auto',
+							height: Ti.Platform.osname == 'android' ? 40 : 'auto',
 							hasChild:true,
-							className: 'phone'
-							//selectedBackgroundColor: 'black',
+							className: 'phone',
+							selectedBackgroundColor: rowSelectionColor,
 						});
 						rowPhone.addEventListener('click', function(evt) {
 							var a = Titanium.UI.createAlertDialog({
-								title: response.businesses[0].display_phone,
+								title: jsonResponse.businesses[0].display_phone,
 								buttonNames: ['Cancel','Call'],
 								cancel: 0
 								
 							});
 							a.addEventListener('click', function(evt) {
 								if (evt.index == 1) {
-									Titanium.Platform.openURL('tel:' + response.businesses[0].phone);
+									Titanium.Platform.openURL('tel:' + jsonResponse.businesses[0].phone);
 								}
 							});
 							
@@ -413,58 +437,71 @@ var winOSHA_detail = {};
 						});
 						
 						var lblPhone = Ti.UI.createLabel({
-							text: response.businesses[0].display_phone,
+							text: jsonResponse.businesses[0].display_phone,
 							left: 10,
 							top: 5,
 							bottom: 5,
 							height: 'auto',
 							width: 'auto',
-						    font:{fontSize:14}
+						    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14},
+						    font:{fontSize: '14dp'},
+						    color: 'black',
+						    touchEnabled: false
 						});
 						rowPhone.add(lblPhone);
 						winOSHA_detail.tableView.insertRowAfter(2,rowPhone);
 						
 						var rowCustomerReviews = Ti.UI.createTableViewRow({
-							height: 'auto',
+							height: Ti.Platform.osname == 'android' ? 30 : 'auto',
 							hasChild: true,
-							className: 'customer_reviews'
+							className: 'customer_reviews',
+							selectedBackgroundColor: rowSelectionColor,
 						});
 						rowCustomerReviews.addEventListener('click', function(evt) {
-							if (response.businesses[0].mobile_url) {
-								//vwYelpBizWebsite.url = response.businesses[0].mobile_url;
+							if (jsonResponse.businesses[0].mobile_url) {
+								//vwYelpBizWebsite.url = jsonResponse.businesses[0].mobile_url;
 								//tgSearch.activeTab.open(winYelpBizWebsite,{animated:true});
-								tgSearch.activeTab.open(winYelpBiz.create(response.businesses[0].mobile_url,false),{animated:true});
-								winDOLMap.win.barColor = headerColor;
+								if (Ti.Platform.osname == 'android') {
+									winYelpBiz.create(jsonResponse.businesses[0].mobile_url,false).open();
+								} else {
+									tgSearch.activeTab.open(winYelpBiz.create(jsonResponse.businesses[0].mobile_url,false),{animated:true});
+									winDOLMap.win.barColor = headerColor;
+								}
+								
 							}
 						});
 						
 						var imgReviewRating = Ti.UI.createImageView({
-							image: response.businesses[0].rating_img_url,
+							image: jsonResponse.businesses[0].rating_img_url,
 							height: 17,
 							bottom: 5,
 							left: 10,
 							//width: 84
-							width: 100
+							width: Ti.Platform.osname == 'android' ? null : 100,
+							touchEnabled: false
 						});
 						
 						var lblReviewCount = Ti.UI.createLabel({
-							text: (response.businesses[0].review_count == 1) ? response.businesses[0].review_count + ' Review' :  response.businesses[0].review_count + ' Reviews',
+							text: (jsonResponse.businesses[0].review_count == 1) ? jsonResponse.businesses[0].review_count + ' Review' :  jsonResponse.businesses[0].review_count + ' Reviews',
 							left: 117,
-							bottom: 6,
+							bottom: Ti.Platform.osname == 'android' ? 4 : 6,
 							height: 'auto',
 							width: 'auto',
-						    font:{fontSize:14, fontWeight:'italics'},
+						    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14, fontWeight:'italics'},
+						    font:{fontSize: '14dp', fontWeight:'italics'},
 						    textAlign:'left',
 						    color: 'gray',
+						    touchEnabled: false
 						});
 						
 						var imgYelpLogo = Ti.UI.createImageView({
-							image:'yelp_logo_50x25.png',
+							image:'images/yelp_logo_50x25.png',
 							right: 5,
 							height: 27,
 							width: 51,
 							//top: 0,
-							bottom: 5
+							bottom: 5,
+							touchEnabled: false
 						});
 						
 						rowCustomerReviews.add(imgReviewRating);
@@ -481,7 +518,7 @@ var winOSHA_detail = {};
 				Ti.API.error("Error: " + evt.error);
 			    Titanium.UI.createAlertDialog({
 			        title: "API call failed",
-			        message: e,
+			        message: evt,
 			        buttonNames: ['OK']
 			    }).show();
 		});
