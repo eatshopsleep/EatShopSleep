@@ -8,6 +8,7 @@ var yelp_api = {
 (function() {
 	
 	yelp_api.searchRequest = function(term, address, zip, category_filter, ll, success, error) {
+		
 		if (term) {
 			var uc = term.toUpperCase();
 			var pos = uc.search('DBA');
@@ -93,10 +94,11 @@ var yelp_api = {
 	    };
 	    
 	    yelp_api.xhr.onload = function(){
-	        //Ti.API.debug("API response: " + this.responseText);
-	        //Titanium.App.fireEvent('hide_indicator');
-	        var jsonResponse = JSON.parse(this.responseText);
-	        success(jsonResponse);
+	        
+	        success(this.responseText);
+	        
+        	//var jsonResponse = JSON.parse(this.responseText);
+        	//success(jsonResponse);	
 	        
 	    };
 	    

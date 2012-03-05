@@ -7,24 +7,26 @@ var winInfo = {
 	function createRowHeader(label, color) {
 		var row = Ti.UI.createTableViewRow({
 			hasChild:false,
-			height:'auto',
+			height: Ti.Platform.osname == 'android' ? 40 : 'auto',
 			width: Titanium.Platform.displayCaps.platformWidth,
 			className: 'name',
 			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
-			backgroundColor: color
+			backgroundColor: color,
+			selectedBackgroundColor: color,
 		});
 		
 		var lbl1 = Ti.UI.createLabel({
 			text: label,
 			color: 'white',
-			top: 7,
+			top: Ti.Platform.osname == 'android' ? 5 : 7,
 			bottom: 5,
 			height: 'auto',
 			left: 10,
 			width: Titanium.Platform.displayCaps.platformWidth - 20,
 			//width: 'auto',
 			textAlign: 'left',
-		    font:{fontSize:14, fontWeight:'bold'}
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 18 : 16, fontWeight:'bold'}
+		    font:{fontSize: '16dp', fontWeight:'bold'}
 		});
 		row.add(lbl1);
 		
@@ -37,7 +39,8 @@ var winInfo = {
 			height:'auto',
 			width: Titanium.Platform.displayCaps.platformWidth,
 			className: 'name',
-			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+			selectedBackgroundColor: 'white'
 		});
 		
 		var lbl1 = Ti.UI.createLabel({
@@ -50,12 +53,11 @@ var winInfo = {
 			width: Titanium.Platform.displayCaps.platformWidth - 20,
 			//width: 'auto',
 			textAlign: 'left',
-		    font:{fontSize:14, fontWeight:'normal'}
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14, fontWeight:'normal'}
+		    font:{fontSize: '14dp', fontWeight:'normal'}
 		});
 		row.add(lbl1);
-		
-		
-		
+
 		return row;
     }
     
@@ -63,10 +65,14 @@ var winInfo = {
 		winInfo.win = Titanium.UI.createWindow({
 			orientationModes: orientationModes,
 			barColor: headerColor,
-			//backgroundColor: '#CCCCCC'
-			backgroundColor: 'white',
-			opacity: 0
+			opacity: Ti.Platform.osname == 'android' ? 1 : 0,
+			tabBarHidden: true,
+			navBarHidden: Ti.Platform.osname == 'android' ? true : false,
 		});	
+		winInfo.win.addEventListener('android:back', function(evt) {
+			winInfo.win.close();
+			winInfo.win = null;
+		});
 		
 		winInfo.btnHome = Titanium.UI.createButton({
 			title: 'Home',
@@ -78,18 +84,23 @@ var winInfo = {
 		
 		});
 		
-		winInfo.toolbarTop = Titanium.UI.createToolbar({
-			items:[winInfo.btnHome],
-			top:0,
-			borderWidth: 0,
-			//height: 44,
-			barColor: headerColor
-		});	
-		winInfo.win.add(winInfo.toolbarTop);
+		if (Ti.Platform.osname=='android') {
+			winInfo.win.add(winHome.createVwTitle());
+		} else {
+			winInfo.toolbarTop = Titanium.UI.createToolbar({
+				items:[winInfo.btnHome],
+				top:0,
+				borderWidth: 0,
+				//height: 44,
+				barColor: headerColor
+			});	
+			winInfo.win.add(winInfo.toolbarTop);
+		}
 		
 		var tvInfo = Titanium.UI.createTableView({
 			top: 44,
-			separatorColor: 'transparent'
+			separatorColor: 'transparent',
+			backgroundColor:'white'
 		});
 		winInfo.win.add(tvInfo);
 		
@@ -99,8 +110,7 @@ var winInfo = {
 		tvInfo.appendRow(createRow('It also provides business listings and customer reviews from yelp.com for these industries.'));
 		
 		tvInfo.appendRow(createRowHeader('Developer',headerColor));
-		tvInfo.appendRow(createRow('R. Moore'));
-		
+		tvInfo.appendRow(createRow('R. Moore'));	
 		
 		return winInfo.win;
     }

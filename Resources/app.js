@@ -10,17 +10,13 @@ Ti.include('disclaimer.js');
 
 var orientationModes = [Titanium.UI.PORTRAIT];
 Ti.UI.setBackgroundColor('white');
-var headerColor = '3366CC';
+var headerColor = '#3366CC';
+var rowSelectionColor = '#7EACFF';
 var currentLocation = {latitude:38.895112,longitude:-77.036366};
 Ti.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 Ti.Geolocation.purpose = 'Acquiring Current Location';
 Ti.Geolocation.distanceFilter = 10;
 
-var indWin = Titanium.UI.createWindow({
-	orientationModes: orientationModes,
-	height:150,
-	width:150
-});
 
 var indView = Titanium.UI.createView({
 	height:150,
@@ -29,14 +25,17 @@ var indView = Titanium.UI.createView({
 	borderRadius:10,
 	opacity:0.8
 });
-//indWin.add(indView);
 
 var actInd = Titanium.UI.createActivityIndicator({
 	style:Titanium.UI.iPhone.ActivityIndicatorStyle.BIG,
 	height:30,
-	width:30
+	width:30,
+	message: Ti.Platform.osname == 'android' ? 'Loading' : null
 });
-indView.add(actInd);
+
+if (Ti.Platform.osname != 'android') {
+	indView.add(actInd);	
+}
 
 var lblActivity = Titanium.UI.createLabel({
 	text:'Loading',
@@ -52,8 +51,9 @@ var tabSearch1 = null;
 var tgSearch = null;
 
 winHome.create().open();
-winDisclaimer.create().open({modal:true,modalTransitionStyle:Ti.UI.iPhone.MODAL_TRANSITION_STYLE_COVER_VERTICAL,modalStyle:Ti.UI.iPhone.MODAL_PRESENTATION_FORMSHEET,navBarHidden:true});
 
+winDisclaimer.create().open({modalTransitionStyle:Ti.UI.iPhone.MODAL_TRANSITION_STYLE_COVER_VERTICAL,modalStyle:Ti.UI.iPhone.MODAL_PRESENTATION_FORMSHEET});
+	
 if(!Ti.Network.online) {
 	alert('Network unavailable. Check your network settings.');
 }

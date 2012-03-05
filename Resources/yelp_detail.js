@@ -9,9 +9,13 @@ var winYelp_detail = {};
         winYelp_detail.win = Titanium.UI.createWindow({
         	orientationModes: orientationModes,
 			backgroundColor: 'white',
-			//title: data.estab_name,
-			left: Titanium.Platform.displayCaps.platformWidth,
+			tabBarHidden: true,
+			navBarHidden: Ti.Platform.osname == 'android' ? true : false,
+			left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
 			barColor: headerColor
+		});
+		winYelp_detail.win.addEventListener('android:back', function() {	
+			winYelp_detail.win.close();
 		});
 		
 		winYelp_detail.tableView = Titanium.UI.createTableView({
@@ -26,7 +30,9 @@ var winYelp_detail = {};
 			height:'auto',
 			className: 'name',
 			backgroundColor: 'black',
-			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+			selectedBackgroundColor: 'black'
+			
 		});
 		
 		var lblEstablishmentName = Ti.UI.createLabel({
@@ -38,7 +44,8 @@ var winYelp_detail = {};
 			left: 10,
 			width: Titanium.Platform.displayCaps.platformWidth - 20,
 			textAlign: 'left',
-		    font:{fontSize:18, fontWeight:'bold'}
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 20 : 18, fontWeight:'bold'}
+		    font:{fontSize: '18dp', fontWeight:'bold'}
 		});
 		rowEstablishmentName.add(lblEstablishmentName);
 		winYelp_detail.tableView.appendRow(rowEstablishmentName);
@@ -46,11 +53,17 @@ var winYelp_detail = {};
 		var rowEstablishmentAddress = Ti.UI.createTableViewRow({
 			hasChild:true,
 			height:'auto',
-			className: 'address'
+			className: 'address',
+			selectedBackgroundColor: rowSelectionColor,
 		});
 		rowEstablishmentAddress.addEventListener('click', function(evt) {
-			tgSearch.activeTab.open(winBizMap.create(data.address, data.city, data.state_code),{animated:true});
-			winDOLMap.win.barColor = headerColor;
+			if (Ti.Platform.osname == 'android') {
+				winBizMap.create(data.address, data.city, data.state_code).open();
+			} else {
+				tgSearch.activeTab.open(winBizMap.create(data.address, data.city, data.state_code),{animated:true});
+				winDOLMap.win.barColor = headerColor;	
+			}
+			
 		});
 		
 		var imgEstablishment = Titanium.UI.createImageView({
@@ -60,10 +73,11 @@ var winYelp_detail = {};
 			left:10,
 			width: 100,
 			borderColor: 'gray',
-			bottom: 1
+			bottom: 1,
+			touchEnabled: false
 		});
 		if (!data.image_url) {
-			imgEstablishment.image = 'default_image.png';
+			imgEstablishment.image = 'images/default_image.png';
 			imgEstablishment.borderColor = 'transparent';
 		}
 		rowEstablishmentAddress.add(imgEstablishment);
@@ -90,19 +104,28 @@ var winYelp_detail = {};
 			//height: 110,
 			//height: 'auto',
 			bottom: 1,
-		    font:{fontSize:14}
+			color: 'black',
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14}
+		    font:{fontSize: '14dp'},
+		    touchEnabled: false
 		});
 		rowEstablishmentAddress.add(lblAddress);
 		winYelp_detail.tableView.appendRow(rowEstablishmentAddress);
 		
 		var rowCustomerReviews = Ti.UI.createTableViewRow({
-			height: 'auto',
+			height: Ti.Platform.osname == 'android' ? 30 : 'auto',
 			hasChild: true,
-			className: 'customer_reviews'
+			className: 'customer_reviews',
+			selectedBackgroundColor: rowSelectionColor,
 		});
 		rowCustomerReviews.addEventListener('click', function(evt) {
-			tgSearch.activeTab.open(winYelpBiz.create(data.mobile_url,false),{animated:true});
-			winDOLMap.win.barColor = headerColor;
+			if (Ti.Platform.osname == 'android') {
+				winYelpBiz.create(data.mobile_url,false).open();
+			} else {
+				tgSearch.activeTab.open(winYelpBiz.create(data.mobile_url,false),{animated:true});
+				winDOLMap.win.barColor = headerColor;
+			}
+			
 		});
 		
 		var imgReviewRating = Ti.UI.createImageView({
@@ -111,27 +134,31 @@ var winYelp_detail = {};
 			bottom: 5,
 			left: 10,
 			//width: 84
-			width: 100
+			width: Ti.Platform.osname == 'android' ? null : 100,
+			touchEnabled: false
 		});
 		
 		var lblReviewCount = Ti.UI.createLabel({
 			text: (data.review_count == 1) ? data.review_count + ' Review' :  data.review_count + ' Reviews',
 			left: 117,
-			bottom: 6,
+			bottom:Ti.Platform.osname == 'android' ? 4 : 6,
 			height: 'auto',
 			width: 'auto',
-		    font:{fontSize:14, fontWeight:'italics'},
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14, fontWeight:'italics'},
+		    font:{fontSize: '14dp', fontWeight:'italics'},
 		    textAlign:'left',
 		    color: 'gray',
+		    touchEnabled: false
 		});
 		
 		var imgYelpLogo = Ti.UI.createImageView({
-			image:'yelp_logo_50x25.png',
+			image:'images/yelp_logo_50x25.png',
 			right: 5,
 			height: 27,
 			width: 51,
 			//top: 0,
-			bottom: 5
+			bottom: 5,
+			touchEnabled: false
 		});
 		rowCustomerReviews.add(imgReviewRating);
 		rowCustomerReviews.add(lblReviewCount);
@@ -140,20 +167,22 @@ var winYelp_detail = {};
 		
 		if (data.phone && data.phone != '') {
 			var rowCallHeader = Ti.UI.createTableViewRow({
-				height: 'auto',
+				height: Ti.Platform.osname == 'android' ? 40 : 'auto',
 				className: 'section_header',
 				backgroundColor: headerColor,
-				selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+				selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+				selectedBackgroundColor: rowSelectionColor
 			});
 			
 			var lblCall = Ti.UI.createLabel({
 				text: 'Call',
-				left: 5,
+				left: 10,
 				top: 5,
 				bottom: 5,
 				height: 'auto',
 				width: 'auto',
-			    font:{fontSize:14, fontWeight:'bold'},
+			    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14, fontWeight:'bold'},
+			    font:{fontSize: '16dp', fontWeight:'bold'},
 			    textAlign:'left',
 			    color: 'white',
 			});
@@ -163,8 +192,8 @@ var winYelp_detail = {};
 			var rowPhone = Ti.UI.createTableViewRow({
 				height: 'auto',
 				hasChild:true,
-				className: 'phone'
-				//selectedBackgroundColor: 'black',
+				className: 'phone',
+				selectedBackgroundColor: rowSelectionColor,
 			});
 			rowPhone.addEventListener('click', function(evt) {
 				var a = Titanium.UI.createAlertDialog({
@@ -190,7 +219,10 @@ var winYelp_detail = {};
 				bottom: 5,
 				height: 'auto',
 				width: 'auto',
-			    font:{fontSize:14}
+				color: 'black',
+			    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14}
+			    font:{fontSize: '14dp'},
+			    touchEnabled: false
 			});
 			rowPhone.add(lblPhone);
 			winYelp_detail.tableView.appendRow(rowPhone);
@@ -198,10 +230,11 @@ var winYelp_detail = {};
 		
 		
 		var rowOSHAHeader = Ti.UI.createTableViewRow({
-			height: 'auto',
+			height: Ti.Platform.osname == 'android' ? 40 : 'auto',
 			className: 'section_header',
 			backgroundColor: headerColor,
-			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+			selectedBackgroundColor: rowSelectionColor
 		});
 		
 		var lblOSHA = Ti.UI.createLabel({
@@ -211,7 +244,8 @@ var winYelp_detail = {};
 			bottom: 5,
 			height: 'auto',
 			width: 'auto',
-		    font:{fontSize:14, fontWeight:'bold'},
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14, fontWeight:'bold'},
+		    font:{fontSize: '16dp', fontWeight:'bold'},
 		    textAlign:'left',
 		    color: 'white',
 		});
@@ -221,7 +255,8 @@ var winYelp_detail = {};
 		var rowOSHADetail = Ti.UI.createTableViewRow({
 			height:'auto',
 			className: 'osha_detail',
-			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
+			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+			selectedBackgroundColor: 'white'
 		});
 		
 		var lblInViolation = Ti.UI.createLabel({
@@ -231,7 +266,9 @@ var winYelp_detail = {};
 			left: 117,
 			right: 10,
 			textAlign: 'left',
-		    font:{fontSize:18, fontWeight:'bold'}
+			color: 'black',
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 20 : 18, fontWeight:'bold'}
+		    font:{fontSize: '18dp', fontWeight:'bold'}
 		});
 		rowOSHADetail.add(lblInViolation);
 		
@@ -243,19 +280,19 @@ var winYelp_detail = {};
 			bottom: 10
 		});
 		if (data.industry == 'Food') {
-			imgInViolation.image = 'food_gray.png';
+			imgInViolation.image = 'images/food_gray.png';
 		}
 		else if (data.industry == 'Retail') {
-			imgInViolation.image = 'retail_gray.png';
+			imgInViolation.image = 'images/retail_gray.png';
 		} else {
-			imgInViolation.image = 'hospitality_gray.png';
+			imgInViolation.image = 'images/hospitality_gray.png';
 		}
 		rowOSHADetail.add(imgInViolation);
         
 		winYelp_detail.tableView.appendRow(rowOSHADetail);
 		
 		var rowContactDOLHeader = Ti.UI.createTableViewRow({
-			height: 'auto',
+			height: Ti.Platform.osname == 'android' ? 40 : 'auto',
 			className: 'section_header',
 			backgroundColor: headerColor,
 			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE
@@ -268,7 +305,8 @@ var winYelp_detail = {};
 			bottom: 5,
 			height: 'auto',
 			width: 'auto',
-		    font:{fontSize:14, fontWeight:'bold'},
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14, fontWeight:'bold'},
+		    font:{fontSize: '16dp', fontWeight:'bold'},
 		    textAlign:'left',
 		    color: 'white',
 		});
@@ -279,10 +317,26 @@ var winYelp_detail = {};
 			hasChild: true,
 			height: 'auto',
 			className: 'section_footer',
-			
+			selectedBackgroundColor: rowSelectionColor,
 		});
 		rowContactDOL.addEventListener('click', function(evt) {
-			tgSearch.activeTab.open(winAction.createNavWin(),{animated:true});
+			if (Ti.Platform.osname == 'android') {
+				winAction.createNavWin().open();
+			} else {
+				
+				tgSearch.activeTab.open(winAction.createNavWin(),{animated:true});
+			}
+		});
+		
+		var imgDolLogo = Titanium.UI.createImageView({
+			//image:'DoLabor_seal_small.gif',
+			image:'DoLabor_seal_small.gif',
+			height: 32,
+			width: 32,
+			right: 5,
+			top: 5,
+			bottom: 5,
+			touchEnabled: false
 		});
 		
 		var lblContactDOL = Ti.UI.createLabel({
@@ -292,21 +346,14 @@ var winYelp_detail = {};
 			bottom: 5,
 			height: 'auto',
 			width: 'auto',
-		    font:{fontSize:14, fontWeight:'normal'},
+		    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14, fontWeight:'normal'},
+		    font:{fontSize: '14dp', fontWeight:'normal'},
 		    textAlign:'left',
 		    color: 'black',
+		    touchEnabled: false
 		});
 		rowContactDOL.add(lblContactDOL);
 		
-		var imgDolLogo = Titanium.UI.createImageView({
-			//image:'DoLabor_seal_small.gif',
-			image:'DoLabor_seal_small.gif',
-			height: 32,
-			width: 32,
-			right: 5,
-			top: 5,
-			bottom: 5
-		});
 		rowContactDOL.add(imgDolLogo);
 		winYelp_detail.tableView.appendRow(rowContactDOL);
 		
