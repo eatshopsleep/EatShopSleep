@@ -1,0 +1,100 @@
+exports.searchRequest = function(term, address, zip, category_filter, ll, success, error) {
+	Ti.include('/lib/oauth.js');
+	Ti.include('/lib/sha1.js');
+	
+	if (term) {
+		var uc = term.toUpperCase();
+		var pos = uc.search('DBA');
+		if (pos > -1) {
+			term = term.substr(pos+4);
+		}
+		term = term.replace(/LLC/i, '');
+		term = term.replace(/INC/i, '');
+		
+		term = term.replace(/,/g, ' ');
+		term = term.replace(/-/g, ' ');
+		term = term.replace(/\(/g, ' ');
+		term = term.replace(/\)/g, ' ');
+		Ti.API.info(term);
+	}
+	
+	var auth = { 
+	  consumerKey: "KTesPRlMU1PRCM7KGn8O0w", 
+	  consumerSecret: "f5hYkyPHkn32ouo5QLZoZ4em9X0",
+	  accessToken: "cZmV2bYBDgBySwAXjjUb1fxRjBRfdpq9",
+	  accessTokenSecret: "G_U0hdJ5l9xe3qvuyIrblHhoqxU",
+	  serviceProvider: { 
+	    signatureMethod: "HMAC-SHA1"
+	  }
+	};
+	
+	var accessor = {
+	  consumerSecret: auth.consumerSecret,
+	  tokenSecret: auth.accessTokenSecret
+	};
+	
+	parameters = [];
+	if (term) {
+		parameters.push(['term', term]);
+	}
+	else {
+		parameters.push(['sort', 1]); // sort by distance
+	}
+	if (category_filter) {
+		parameters.push(['category_filter', category_filter]);
+	}
+	//if (bounds) {
+	//	parameters.push(['bounds', bounds.sw_latitude + ',' + bounds.sw_longitude + '|' + bounds.ne_latitude + ',' + bounds.ne_longitude]);	
+	//}
+	//else {
+	//	parameters.push(['location', address + ',' + zip]);	
+	//}
+	if (ll) {
+		parameters.push(['ll', ll]);	
+	}
+	else {
+		parameters.push(['location', address + ',' + zip]);	
+	}
+	parameters.push(['oauth_consumer_key', auth.consumerKey]);
+	parameters.push(['oauth_consumer_secret', auth.consumerSecret]);
+	parameters.push(['oauth_token', auth.accessToken]);
+	parameters.push(['oauth_signature_method', 'HMAC-SHA1']);
+	
+	var message = { 
+	  'action': 'http://api.yelp.com/v2/search',
+	  'method': 'GET',
+	  'parameters': parameters 
+	};
+	
+	OAuth.setTimestampAndNonce(message);
+	OAuth.SignatureMethod.sign(message, accessor);
+	
+	var parameterMap = OAuth.getParameterMap(message.parameters);
+	
+	var xhr = Titanium.Network.createHTTPClient();
+    xhr.timeout = 100000;
+     
+	var finalUrl = OAuth.addToURL(message.action, message.parameters); 
+	
+	xhr.open('GET', finalUrl);
+    xhr.onerror = function(evt){
+    	//Titanium.App.fireEvent('hide_indicator');
+        Ti.API.error("API ERROR " + evt.error);
+        error(evt);
+        
+    };
+    
+    xhr.onload = function(){
+        
+        success(this.responseText);
+        
+    	//var jsonResponse = JSON.parse(this.responseText);
+    	//success(jsonResponse);	
+        
+    };
+    
+    //Titanium.App.fireEvent('show_indicator');        
+    xhr.send();
+    
+};
+

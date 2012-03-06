@@ -10,7 +10,7 @@
     </deployment-targets>
     <id>com.rgm.eatshopsleep</id>
     <name>EatShopSleep</name>
-    <version>1.2</version>
+    <version>1.3</version>
     <publisher>R. Moore</publisher>
     <url>http://appsbyrachel.com</url>
     <description>not specified</description>
@@ -34,9 +34,9 @@
         </orientations>
     </iphone>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
-		<manifest>
-			<supports-screens android:anyDensity="false"/>
-		</manifest>
-	</android>
+        <manifest>
+            <supports-screens android:anyDensity="false"/>
+        </manifest>
+    </android>
     <modules/>
 </ti:app>
