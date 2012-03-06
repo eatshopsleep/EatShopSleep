@@ -1,59 +1,23 @@
-Ti.include('osha_detail.js');
-Ti.include('whd_detail.js');
-Ti.include('yelp_api.js');
-Ti.include('yelp_biz.js');
-Ti.include('dol_map.js');
-Ti.include('home.js');
-Ti.include('take_action.js');
-Ti.include('info.js');
-Ti.include('disclaimer.js');
-
-var orientationModes = [Titanium.UI.PORTRAIT];
-Ti.UI.setBackgroundColor('white');
-var headerColor = '#3366CC';
-var rowSelectionColor = '#7EACFF';
-var currentLocation = {latitude:38.895112,longitude:-77.036366};
 Ti.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 Ti.Geolocation.purpose = 'Acquiring Current Location';
 Ti.Geolocation.distanceFilter = 10;
 
+var app = require('/lib/globals');
 
-var indView = Titanium.UI.createView({
-	height:150,
-	width:150,
-	backgroundColor:'#000',
-	borderRadius:10,
-	opacity:0.8
-});
+var VwIndicator = require('/lib/VwIndicator');
+app.vwIndicator = new VwIndicator(); 
+VwIndicator = null;
 
-var actInd = Titanium.UI.createActivityIndicator({
-	style:Titanium.UI.iPhone.ActivityIndicatorStyle.BIG,
-	height:30,
-	width:30,
-	message: Ti.Platform.osname == 'android' ? 'Loading' : null
-});
+var WinHome = require('/lib/WinHome');
+app.winHome = new WinHome(); 
+app.winHome.ui.open();
+WinHome = null;
 
-if (Ti.Platform.osname != 'android') {
-	indView.add(actInd);	
-}
+var WinDisclaimer = require('/lib/WinDisclaimer');
+app.winDisclaimer = new WinDisclaimer(); 
+app.winDisclaimer.ui.open({modalTransitionStyle:Ti.UI.iPhone.MODAL_TRANSITION_STYLE_COVER_VERTICAL,modalStyle:Ti.UI.iPhone.MODAL_PRESENTATION_FORMSHEET});
+WinDisclaimer = null;
 
-var lblActivity = Titanium.UI.createLabel({
-	text:'Loading',
-	color:'#fff',
-	width:'auto',
-	height:'auto',
-	font:{fontSize:20,fontWeight:'bold'},
-	bottom:20
-});
-indView.add(lblActivity);
-
-var tabSearch1 = null;
-var tgSearch = null;
-
-winHome.create().open();
-
-winDisclaimer.create().open({modalTransitionStyle:Ti.UI.iPhone.MODAL_TRANSITION_STYLE_COVER_VERTICAL,modalStyle:Ti.UI.iPhone.MODAL_PRESENTATION_FORMSHEET});
-	
 if(!Ti.Network.online) {
 	alert('Network unavailable. Check your network settings.');
 }
@@ -61,8 +25,7 @@ if(!Ti.Network.online) {
 Titanium.Network.addEventListener('change', function(evt) {
 	if (!evt.online) {
 		alert('Network unavailable. Check your network settings.');
-	}
-	else {
+	} else {
 		if (winDOLMap.googleMap) {
 			//var lat = winDOLMap.googleMap.evalJS('getMapCenterLat();');
 			//if (!lat) {
@@ -76,4 +39,78 @@ Titanium.Network.addEventListener('change', function(evt) {
 		
 		
 	}
+});
+
+Ti.App.addEventListener('placeCall',function(evt) { 
+	var a = Titanium.UI.createAlertDialog({
+		title: evt.display,
+		buttonNames: ['Cancel','Call'],
+		cancel: 0,
+		number: evt.number
+	});
+	a.addEventListener('click', function(evt) {
+		if (evt.index == 1) {
+			Titanium.Platform.openURL('tel:' + a.number);
+		}
+	});
+	
+	a.show();
+});
+
+Ti.App.addEventListener('zoomChanged', function(evt){
+	if (app.winSearch) {
+		app.winSearch.zoomChanged(evt);
+	}
+});
+
+
+Ti.App.addEventListener('yelpMarkerClicked', function(evt){
+	if (app.winSearch) {
+		app.winSearch.yelpMarkerClicked(evt);
+	}
+});
+
+Ti.App.addEventListener('oshaMarkerClicked', function(evt){
+	if (app.winSearch) {
+		app.winSearch.oshaMarkerClicked(evt);
+	}
+});
+
+Ti.App.addEventListener('whdMarkerClicked', function(evt){
+	if (app.winSearch) {
+		app.winSearch.whdMarkerClicked(evt);
+	}
+});	
+
+Ti.App.addEventListener('getYelpList', function(evt){
+	if (app.winSearch) {
+		app.winSearch.getYelpList(evt);
+	}
+});
+
+Ti.App.addEventListener('getLocalYelp',function(evt) {
+	if (app.winSearch) {
+		app.winSearch.getLocalYelp(evt);
+	}
+});
+
+Ti.App.addEventListener('getDOLList',function(evt) {
+	if (app.winSearch) {
+		app.winSearch.getDOLList(evt);
+	}
+	
+});
+
+Ti.App.addEventListener('geocodeSuccess', function(evt){
+	if (app.winSearch) {
+		app.winSearch.update(app.FilterSettings.SearchName);
+	}
+	if (app.winLocation) {
+		app.winLocation.ui.close();
+		app.winLocation.ui = null;
+		app.winLocation = null;	
+	}
+		
+	
+		
 });
