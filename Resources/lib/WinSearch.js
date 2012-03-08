@@ -1,6 +1,7 @@
 function WinSearch() {
 	var app = require('/lib/globals');
 	var hideRedoButton = false;
+	var googleMapVisible = true;
 	
 	var btnHome = Titanium.UI.createButton({
 		title: 'Home',
@@ -9,6 +10,8 @@ function WinSearch() {
 	btnHome.addEventListener('click', function(evt){
 		
 		app.tgSearch.animate({opacity:0,duration:300}, function() {
+			app.CurrentLocation.latitude = googleMap.evalJS('getMapCenterLat();');
+			app.CurrentLocation.longitude = googleMap.evalJS('getMapCenterLng();');
 			self.close();
 			
 			app.winSearch = null;
@@ -29,26 +32,13 @@ function WinSearch() {
 		backgroundColor: 'black'
 	});
 	self.addEventListener('android:back', function(){
-		self.close();
+		app.CurrentLocation.latitude = googleMap.evalJS('getMapCenterLat();');
+		app.CurrentLocation.longitude = googleMap.evalJS('getMapCenterLng();');
 		
+		self.close();
 		app.winSearch = null;
 	});
-	
-	var wvDolList = Titanium.UI.createWebView({
-	    url: '/lib/gviz.html',
-	    top: 0,
-	    left: 0,
-	    visible: false
-	});
-	wvDolList.addEventListener('beforeload', function(evt) {
-		app.vwIndicator.show(self);
 		
-	});
-	wvDolList.addEventListener('load', function(evt) {
-		app.vwIndicator.hide(self);
-	});
-	self.add(wvDolList);
-	
 	var tvDolList = Titanium.UI.createTableView({
 		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle,
 		top: 0,
@@ -82,17 +72,35 @@ function WinSearch() {
 	    scalesPageToFit: true,
 	    visible: true
 	});
-	googleMap.addEventListener('beforeload', function(evt) {
+	/*googleMap.addEventListener('beforeload', function(evt) {
 		app.vwIndicator.show(self);
-	});
+	});*/
 	googleMap.addEventListener('load', function(evt) {
-		app.vwIndicator.hide(self);
+		wvDolList.url = '/lib/gviz.html';
+		
 	});
 	googleMap.addEventListener('error', function(evt) {
-		app.vwIndicator.hide(self);
+		//app.vwIndicator.hide(self);
 		alert('Webpage not available.');
 	});
 	self.add(googleMap);
+	
+	var wvDolList = Titanium.UI.createWebView({
+	    //url: '/lib/gviz.html',
+	    top: 0,
+	    left: 0,
+	    visible: false
+	});
+	wvDolList.addEventListener('beforeload', function(evt) {
+		app.vwIndicator.show(self);
+		
+	});
+	wvDolList.addEventListener('load', function(evt) {
+		Ti.App.fireEvent('setMapCenter',{lat: app.CurrentLocation.latitude, lon: app.CurrentLocation.longitude});
+		update(app.FilterSettings.SearchName);	
+		app.vwIndicator.hide(self);
+	});
+	self.add(wvDolList);
 	
 	var btnRedoSearch = Titanium.UI.createButton({
 		title: 'Redo Search in This Area',
@@ -143,12 +151,11 @@ function WinSearch() {
 		btnMap.addEventListener('click', function(evt){
 			tvDolList.animate({opacity: 0, duration:300});
 			googleMap.animate({opacity: 1, duration:300});
+			googleMapVisible = true;
 			if (hideRedoButton) {
 				btnRedoSearch.visible = false;
-				//toolbarRedo.animate({opacity: 0, duration:300});	
 			} else {
 				btnRedoSearch.visible = true;
-				//toolbarRedo.animate({opacity: 1, duration:300});
 			}	
 		});
 		
@@ -167,8 +174,7 @@ function WinSearch() {
 			tvDolList.animate({opacity: 1, duration:300});
 			googleMap.animate({opacity: 0, duration:300});
 			btnRedoSearch.visible = false;
-			
-			//toolbarRedo.animate({opacity: 0, duration:300});
+			googleMapVisible = false;
 		});
 		
 		var btnFilter = Titanium.UI.createLabel({
@@ -228,6 +234,7 @@ function WinSearch() {
 			if (evt.index == 0) {
 				tvDolList.animate({opacity: 0, duration:300});
 				googleMap.animate({opacity: 1, duration:300});
+				googleMapVisible = true;
 				if (hideRedoButton) {
 					btnRedoSearch.visible = false;
 					//toolbarRedo.animate({opacity: 0, duration:300});	
@@ -237,7 +244,7 @@ function WinSearch() {
 				}
 				
 			} else {
-				
+				googleMapVisible = false;
 				tvDolList.animate({opacity: 1, duration:300});
 				googleMap.animate({opacity: 0, duration:300});
 				btnRedoSearch.visible = false;
@@ -267,6 +274,8 @@ function WinSearch() {
 		});	
 		self.add(toolbarBottom);
 	}
+	
+	this.ui = self;
 	
 	function getYelpList(evt, industry) {
 	
@@ -464,25 +473,27 @@ function WinSearch() {
 			newData.push(section);
 			tvDolList.setData(newData);
 		}
-		
+		//app.vwIndicator.hide(self);
 	}
-
-	this.ui = self;
-	this.zoomChanged = function(evt) {
-		if (evt.hideRedoButton) {
+	
+	function zoomChanged(evt) {
+		
+		if (evt.hideRedoButton == true) {
 			hideRedoButton = true;
 			btnRedoSearch.visible = false;
-			//toolbarRedo.animate({opacity: 0, duration:300});
+			
 		} else {
+			
 			hideRedoButton = false;
-			if (googleMap.opacity == 1) {
+			if (googleMapVisible == true) {
 				btnRedoSearch.visible = true;	
 			}
-			
-			//toolbarRedo.animate({opacity: 1, duration:300});	
+				
 		}
 	}
-	this.yelpMarkerClicked = function(evt) {
+	this.zoomChanged = zoomChanged;
+	
+	function yelpMarkerClicked(evt) {
 		evt.biz_name = unescape(evt.name);
 		evt.address = unescape(evt.address);
 		evt.city = unescape(evt.city);
@@ -502,7 +513,9 @@ function WinSearch() {
 		
 		self.barColor = app.HEADER_COLOR;
 	}
-	this.oshaMarkerClicked = function(evt) {
+	this.yelpMarkerClicked = yelpMarkerClicked;
+	
+	function oshaMarkerClicked(evt) {
 		evt.biz_name = unescape(evt.estab_name);
 		evt.address = unescape(evt.site_address);
 		evt.city = unescape(evt.site_city);
@@ -522,7 +535,9 @@ function WinSearch() {
 		
 		self.barColor = app.HEADER_COLOR;
 	}
-	this.whdMarkerClicked = function(evt) {
+	this.oshaMarkerClicked = oshaMarkerClicked;
+	
+	function whdMarkerClicked(evt) {
 		evt.biz_name = unescape(evt.trade_nm);
 		evt.address = unescape(evt.street_addr_1_txt);
 		evt.city = unescape(evt.city_nm);
@@ -546,7 +561,9 @@ function WinSearch() {
 		
 		self.barColor = app.HEADER_COLOR;
 	}
-	this.getLocalYelp = function(evt) {
+	this.whdMarkerClicked = whdMarkerClicked;
+	
+	function getLocalYelp(evt) {
 		//googleMap.evalJS('setLocalZoom();')
 		
 		//var bounds = {sw_latitude: googleMap.evalJS('getBoundsSWLatitude();'),
@@ -563,12 +580,13 @@ function WinSearch() {
 		var YelpApi = require('/lib/YelpApi');
 		
 		switch (app.FilterSettings.Industry) {
-			case app.FilterSettings.INDUSTRY_FOOD:
+			case app.Filter.INDUSTRY_FOOD:
 				YelpApi.searchRequest(app.FilterSettings.SearchName,null,null, food_category, evt.ll, 
 					function(response) {
+						
 						var jsonResponse = JSON.parse(response);
 						if (jsonResponse.businesses.length > 0) {
-	
+							// WANT PASS ON PARSED VALUES HERE BUT ANDROID WONT SEE THEM: TIMOB-5499
 					    	Ti.App.fireEvent('setYelpFoodMarkers', {response:response, searchName:app.FilterSettings.SearchName});
 					    	getYelpList(jsonResponse, 'Food');
 					    }
@@ -589,7 +607,7 @@ function WinSearch() {
 					    }).show();
 				});
 				break;
-			case app.FilterSettings.INDUSTRY_RETAIL:
+			case app.Filter.INDUSTRY_RETAIL:
 				YelpApi.searchRequest(app.FilterSettings.SearchName,null,null, retail_category, evt.ll, 
 					function(response) {     
 						var jsonResponse = JSON.parse(response);
@@ -615,7 +633,7 @@ function WinSearch() {
 					    }).show();
 				});
 				break;
-			case app.FilterSettings.INDUSTRY_HOSPITALITY:
+			case app.Filter.INDUSTRY_HOSPITALITY:
 				YelpApi.searchRequest(app.FilterSettings.SearchName,null,null, hospitality_category, evt.ll, 
 					function(response) {  
 						var jsonResponse = JSON.parse(response);
@@ -642,7 +660,7 @@ function WinSearch() {
 					    }).show();
 				});
 				break;
-			case app.FilterSettings.INDUSTRY_ALL:
+			case app.Filter.INDUSTRY_ALL:
 				YelpApi.searchRequest(app.FilterSettings.SearchName,null,null, food_category, evt.ll, 
 					function(response) {     
 						
@@ -722,7 +740,9 @@ function WinSearch() {
 		}
 		
 	}
-	this.getDOLList = function(evt) {
+	this.getLocalYelp = getLocalYelp;
+	
+	function getDOLList(evt) {
 		var json = JSON.parse(evt.response);
 	
 		if (json.rows.length > 0) {
@@ -1004,20 +1024,21 @@ function WinSearch() {
 			newData.push(section);
 			tvDolList.setData(newData);	
 		}
-		
+		//app.vwIndicator.hide(self);
 	}
+	this.getDOLList = getDOLList;
 	
 	function sourceOSHA(name,ll) {
 		var where = '';
 		
 		switch (app.FilterSettings.Inspections) {
-		case app.FilterSettings.INSPECTIONS_VIOLATIONS:
+		case app.Filter.INSPECTIONS_VIOLATIONS:
 			where = 'osha_violation_indicator = 1';
 			break;
-		case app.FilterSettings.INSPECTIONS_NOVIOLATIONS:
+		case app.Filter.INSPECTIONS_NOVIOLATIONS:
 			where = 'osha_violation_indicator = 0';
 			break;
-		case app.FilterSettings.INSPECTIONS_ALL:
+		case app.Filter.INSPECTIONS_ALL:
 			where = '';
 			break;	
 		}
@@ -1035,7 +1056,7 @@ function WinSearch() {
 		} 
 		
 		switch (app.FilterSettings.Industry) {
-		case app.FilterSettings.INDUSTRY_FOOD:
+		case app.Filter.INDUSTRY_FOOD:
 			googleMap.evalJS('setLayerOSHAFood(\"' + where + '\");');
 			if (name) {
 				wvDolList.evalJS('setLayerOSHAFood(\"' + where + '\",\"' + '' + '\");');
@@ -1043,7 +1064,7 @@ function WinSearch() {
 				wvDolList.evalJS('setLayerOSHAFood(\"' + where + '\",\"' + ll + '\");');
 			}
 			break;	
-		case app.FilterSettings.INDUSTRY_RETAIL:
+		case app.Filter.INDUSTRY_RETAIL:
 			googleMap.evalJS('setLayerOSHARetail(\"' + where + '\");');
 			if (name) {
 				wvDolList.evalJS('setLayerOSHARetail(\"' + where + '\",\"' + '' + '\");');
@@ -1051,7 +1072,7 @@ function WinSearch() {
 				wvDolList.evalJS('setLayerOSHARetail(\"' + where + '\",\"' + ll + '\");');
 			}
 			break;
-		case app.FilterSettings.INDUSTRY_HOSPITALITY:
+		case app.Filter.INDUSTRY_HOSPITALITY:
 			googleMap.evalJS('setLayerOSHAHospitality(\"' + where + '\");');
 			if (name) {
 				wvDolList.evalJS('setLayerOSHAHospitality(\"' + where + '\",\"' + '' + '\");');
@@ -1059,12 +1080,7 @@ function WinSearch() {
 				wvDolList.evalJS('setLayerOSHAHospitality(\"' + where + '\",\"' + ll + '\");');
 			}
 			break;
-		case app.FilterSettings.INDUSTRY_ALL:
-			/*
-			googleMap.evalJS('setLayerOSHAFood(\"' + where + '\");');
-			googleMap.evalJS('setLayerOSHARetail(\"' + where + '\");');
-			googleMap.evalJS('setLayerOSHAHospitality(\"' + where + '\");');
-			*/
+		case app.Filter.INDUSTRY_ALL:
 			googleMap.evalJS('setLayerOSHAFull(\"' + where + '\");');
 			
 			if (name) {
@@ -1084,13 +1100,13 @@ function WinSearch() {
 		var where = '';
 		
 		switch (app.FilterSettings.Inspections) {
-		case app.FilterSettings.INSPECTIONS_VIOLATIONS:
+		case app.Filter.INSPECTIONS_VIOLATIONS:
 			where = 'whd_violation_indicator = 1';
 			break;
-		case app.FilterSettings.INSPECTIONS_NOVIOLATIONS:
+		case app.Filter.INSPECTIONS_NOVIOLATIONS:
 			where = 'whd_violation_indicator = 0';
 			break;
-		case app.FilterSettings.INSPECTIONS_ALL:
+		case app.Filter.INSPECTIONS_ALL:
 			where = '';
 			break;	
 		}
@@ -1108,7 +1124,7 @@ function WinSearch() {
 		} 
 		
 		switch (app.FilterSettings.Industry) {
-		case app.FilterSettings.INDUSTRY_FOOD:
+		case app.Filter.INDUSTRY_FOOD:
 			googleMap.evalJS('setLayerWHDFood(\"' + where + '\");');
 			if (name) {
 				wvDolList.evalJS('setLayerWHDFood(\"' + where + '\",\"' + '' + '\");');
@@ -1116,7 +1132,7 @@ function WinSearch() {
 				wvDolList.evalJS('setLayerWHDFood(\"' + where + '\",\"' + ll + '\");');
 			}
 			break;	
-		case app.FilterSettings.INDUSTRY_RETAIL:
+		case app.Filter.INDUSTRY_RETAIL:
 			googleMap.evalJS('setLayerWHDRetail(\"' + where + '\");');
 			if (name) {
 				wvDolList.evalJS('setLayerWHDRetail(\"' + where + '\",\"' + '' + '\");');
@@ -1124,7 +1140,7 @@ function WinSearch() {
 				wvDolList.evalJS('setLayerWHDRetail(\"' + where + '\",\"' + ll + '\");');
 			}
 			break;
-		case app.FilterSettings.INDUSTRY_HOSPITALITY:
+		case app.Filter.INDUSTRY_HOSPITALITY:
 			googleMap.evalJS('setLayerWHDHospitality(\"' + where + '\");');
 			if (name) {
 				wvDolList.evalJS('setLayerWHDHospitality(\"' + where + '\",\"' + '' + '\");');
@@ -1132,12 +1148,7 @@ function WinSearch() {
 				wvDolList.evalJS('setLayerWHDHospitality(\"' + where + '\",\"' + ll + '\");');
 			}
 			break;
-		case app.FilterSettings.INDUSTRY_ALL:
-			/*
-			googleMap.evalJS('setLayerWHDFood(\"' + where + '\");');
-			googleMap.evalJS('setLayerWHDRetail(\"' + where + '\");');
-			googleMap.evalJS('setLayerWHDHospitality(\"' + where + '\");');
-			*/
+		case app.Filter.INDUSTRY_ALL:
 			googleMap.evalJS('setLayerWHDFull(\"' + where + '\");');
 			if (name) {
 				wvDolList.evalJS('setLayerWHDFood(\"' + where + '\",\"' + '' + '\");');
@@ -1154,13 +1165,13 @@ function WinSearch() {
 	
 	function sourceDOL(name,ll) {
 		switch (app.FilterSettings.DolSource) {
-		case app.FilterSettings.DOLSOURCE_OSHA:
+		case app.Filter.DOLSOURCE_OSHA:
 			sourceOSHA(name,ll);
 			break;
-		case app.FilterSettings.DOLSOURCE_WHD:
+		case app.Filter.DOLSOURCE_WHD:
 			sourceWHD(name,ll);
 			break;
-		case app.FilterSettings.DOLSOURCE_ALL:
+		case app.Filter.DOLSOURCE_ALL:
 			sourceWHD(name,ll);
 			sourceOSHA(name,ll);
 			break;
@@ -1168,40 +1179,55 @@ function WinSearch() {
 	}
 	
 	function update(name) {
-
-		var ll = googleMap.evalJS('getMapCenterLat();')	+ ',' + googleMap.evalJS('getMapCenterLng();');
 		
-		switch (app.FilterSettings.Source) {
-		case app.FilterSettings.SOURCE_DOL:
-			Ti.App.fireEvent('clearYelpMarkers', null);
-			googleMap.evalJS('clearLayers();');
-			tvDolList.data = [];
-			
-			sourceDOL(name,ll);
-			
-			break;
-		case app.FilterSettings.SOURCE_YELP:
-			Ti.App.fireEvent('clearYelpMarkers', null);
-			googleMap.evalJS('clearLayers();');
-			tvDolList.data = [];
-			
-			Ti.App.fireEvent('getLocalYelp', {ll: ll});
-			break;
-		case app.FilterSettings.SOURCE_ALL:		
-			Ti.App.fireEvent('clearYelpMarkers', null);
-			googleMap.evalJS('clearLayers();');
-			tvDolList.data = [];
-			
-			sourceDOL(name,ll);
-			Ti.App.fireEvent('getLocalYelp', {ll: ll});
-			break;
+		if(!Ti.Network.online) {
+			alert('Network unavailable. Check your network settings.');
+		} else {
+			var ll = googleMap.evalJS('getMapCenterLat();')	+ ',' + googleMap.evalJS('getMapCenterLng();');
+		
+			switch (app.FilterSettings.Source) {
+			case app.Filter.SOURCE_DOL:
+				Ti.App.fireEvent('clearYelpMarkers', null);
+				googleMap.evalJS('clearLayers();');
+				tvDolList.data = [];
+				
+				sourceDOL(name,ll);
+				
+				break;
+			case app.Filter.SOURCE_YELP:
+				Ti.App.fireEvent('clearYelpMarkers', null);
+				googleMap.evalJS('clearLayers();');
+				tvDolList.data = [];
+				
+				//Ti.App.fireEvent('getLocalYelp', {ll: ll});
+				getLocalYelp({ll: ll});
+				break;
+			case app.Filter.SOURCE_ALL:		
+				Ti.App.fireEvent('clearYelpMarkers', null);
+				googleMap.evalJS('clearLayers();');
+				tvDolList.data = [];
+				
+				sourceDOL(name,ll);
+				//Ti.App.fireEvent('getLocalYelp', {ll: ll});
+				getLocalYelp({ll: ll});
+				break;
+			}
 		}
+		
 
     }
     this.update = update;
     
-    this.setLocalZoom = function setLocalZoom() {
+    function setLocalZoom() {
     	googleMap.evalJS('setLocalZoom();');
+    };
+    this.setLocalZoom = setLocalZoom;
+    
+    function reload() {
+    	googleMap.reload();
+		wvDolList.reload();
+		update(app.FilterSettings.SearchName);	
     }
+    this.reload = reload;
 }
 module.exports = WinSearch;

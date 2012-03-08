@@ -16,7 +16,7 @@ function WinLocation() {
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
 		barColor: app.HEADER_COLOR,
 		title: 'Map Location',
-		leftNavButton: btnClose,
+		rightNavButton: btnClose,
 		modal: true
 	});
 	self.addEventListener('android:back', function(evt) {
@@ -65,32 +65,34 @@ function WinLocation() {
 		font:{fontSize: '14dp',fontWeight:'bold'}
 	});
 	btnCurrentLocation.addEventListener('click',function(evt) {
-		//alert(Ti.Geolocation.locationServicesEnabled);
-		Ti.Geolocation.getCurrentPosition(function(evt){
-			if (evt.error) {
-				if (Titanium.Geolocation.locationServicesEnabled) {
-					alert('Turn on Location Services');
+		if(!Ti.Network.online) {
+			alert('Network unavailable. Check your network settings.');
+		} else {
+			Ti.Geolocation.getCurrentPosition(function(evt){
+				if (evt.error) {
+					if (Titanium.Geolocation.locationServicesEnabled) {
+						alert('Turn on Location Services');
+					} else {
+						Ti.UI.createAlertDialog({
+				            title:'Current Location',
+				            message:'Cannot Get Your Current Location.'
+				        }).show();
+					}
+			        Ti.API.error('Geolocation error:' + evt.error);
 				} else {
-					Ti.UI.createAlertDialog({
-			            title:'Current Location',
-			            message:'Cannot Get Your Current Location.'
-			        }).show();
+	
+					app.CurrentLocation.latitude = evt.coords.latitude;
+					app.CurrentLocation.longitude = evt.coords.longitude;
+					Ti.App.fireEvent('setMapCenter',{lat: app.CurrentLocation.latitude, lon: app.CurrentLocation.longitude});
+					
+					app.winSearch.setLocalZoom();
+					app.winSearch.update(app.FilterSettings.SearchName);	
+					
+					self.close();
+					app.winLocation = null;
 				}
-		        Ti.API.error('Geolocation error:' + evt.error);
-			} else {
-
-				app.currentLocation.latitude = evt.coords.latitude;
-				app.currentLocation.longitude = evt.coords.longitude;
-				Ti.App.fireEvent('setMapCenter',{lat: app.currentLocation.latitude, lon: app.currentLocation.longitude});
-				
-				app.winSearch.setLocalZoom();
-				app.winSearch.update(app.FilterSettings.SearchName);	
-				
-				self.close();
-				app.winLocation = null;
-			}
-		});
-		
+			});
+		}
 	});
 	vwLocation.add(btnCurrentLocation);
 	
@@ -125,9 +127,6 @@ function WinLocation() {
 		hintText: 'address, city, state, or zip',
 		visible: true
 	});
-	txtLocation.addEventListener('return',function(evt){
-		Ti.App.fireEvent('geocode',{location: txtLocation.value});
-	});
 	vwLocation.add(txtLocation);
 	
 	var btnSearch = Ti.UI.createButton({
@@ -141,8 +140,13 @@ function WinLocation() {
 		font:{fontSize: '14dp',fontWeight:'bold'}
 	});
 	btnSearch.addEventListener('click', function() {
-		Ti.App.fireEvent('geocode',{location: txtLocation.value});
+		if(!Ti.Network.online) {
+			alert('Network unavailable. Check your network settings.');
+		} else {
+			Ti.App.fireEvent('geocode',{location: txtLocation.value});
+		}
 		
+		// COMMENT UNTIL TITANIUM FIX
 		/*
 		Ti.Geolocation.forwardGeocoder(txtLocation.value,function(evt) {
 			alert(evt.latitude + ', ' + evt.longitude);
@@ -170,7 +174,6 @@ function WinLocation() {
 	vwLocation.add(btnSearch);
 	
 	self.add(vwLocation);
-
 
 	this.ui = self;
 }

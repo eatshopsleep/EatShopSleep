@@ -1,6 +1,7 @@
 Ti.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 Ti.Geolocation.purpose = 'Acquiring Current Location';
 Ti.Geolocation.distanceFilter = 10;
+Ti.UI.setBackgroundColor('white');
 
 var app = require('/lib/globals');
 
@@ -26,19 +27,13 @@ Titanium.Network.addEventListener('change', function(evt) {
 	if (!evt.online) {
 		alert('Network unavailable. Check your network settings.');
 	} else {
-		if (winDOLMap.googleMap) {
-			//var lat = winDOLMap.googleMap.evalJS('getMapCenterLat();');
-			//if (!lat) {
-				winDOLMap.googleMap.reload();
-				winDOLMap.wvDolList.reload();
-				winMapFilter.update(FilterSettings.SearchName);	
-			//} else {
-			//	winMapFilter.update(FilterSettings.SearchName);	
-			//}
+		if (app.winSearch) {
+			//app.winSearch.reload();
+			
 		}
 		
-		
 	}
+
 });
 
 Ti.App.addEventListener('placeCall',function(evt) { 
@@ -81,7 +76,7 @@ Ti.App.addEventListener('whdMarkerClicked', function(evt){
 		app.winSearch.whdMarkerClicked(evt);
 	}
 });	
-
+/*
 Ti.App.addEventListener('getYelpList', function(evt){
 	if (app.winSearch) {
 		app.winSearch.getYelpList(evt);
@@ -93,7 +88,7 @@ Ti.App.addEventListener('getLocalYelp',function(evt) {
 		app.winSearch.getLocalYelp(evt);
 	}
 });
-
+*/
 Ti.App.addEventListener('getDOLList',function(evt) {
 	if (app.winSearch) {
 		app.winSearch.getDOLList(evt);

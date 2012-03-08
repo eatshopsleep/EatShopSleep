@@ -1,10 +1,16 @@
 function WinFilter() {
-	var bb = null;
+	
+	//var bb = null;
 	var checkBox, tbNameSearch, tbIndustry, pkrIndustry, tbSource, pkrSource, tbViolation, pkrViolation, tbDOLSource, pkrDOLSource, tbDOLArea, winWidth;
 	
 	var app = require('/lib/globals');
+	var tempFilterSettings = {};
+	for (var key in app.FilterSettings) {
+		tempFilterSettings[key] = app.FilterSettings[key];
+	}
 	
 	
+	/*
 	if (Ti.Platform.osname != 'android') {
 		bb = Titanium.UI.createButtonBar({
 			labels:['Apply', 'Cancel'],
@@ -12,52 +18,50 @@ function WinFilter() {
 		});
 		bb.addEventListener('click', function(evt) {
 			if (evt.index == 0) {
-				app.FilterSettings.Inspections = tbViolation.index;
-				app.FilterSettings.DolSource = tbDOLSource.index;
-				app.FilterSettings.Industry = tbIndustry.index;
-				app.FilterSettings.Source = tbSource.index;
 				
-				if (tbNameSearch.index == 1) {
-					app.FilterSettings.SearchName = textSearch.value;
+				if (checkChanges() == true) {
+					app.winSearch.update(app.FilterSettings.SearchName);	
 				}
-				else {
-					app.FilterSettings.SearchName = null;
-				}
-			
-				app.winSearch.update(app.FilterSettings.SearchName);	
+				
 				self.close();
-				
 				app.winFilter = null;
 			} else {
 				self.close();
-				
 				app.winFilter = null;
 			}
 			
 		});
 	}
+	*/
+	var btnClose = Ti.UI.createButton({
+		title:'Close'
+	});
+	btnClose.addEventListener('click', function() {
+		if (checkChanges() == true) {
+			app.winSearch.update(app.FilterSettings.SearchName);	
+		}
+		
+		self.close();
+		app.winFilter = null;
+	});
 	
 	var self = Ti.UI.createWindow({
 		orientationModes: app.ORIENTATION_MODES,
 		backgroundColor:'white',
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
 		barColor: app.HEADER_COLOR,
-		//title: 'Filter',
-		leftNavButton: Ti.UI.createLabel({color:'white',font:{fontSize:'18dp', fontWeight:'bold'},text: ' Filter'}),
-		rightNavButton: bb,
+		title: 'Filter',
+		//leftNavButton: Ti.UI.createLabel({color:'white',font:{fontSize:'18dp', fontWeight:'bold'},text: ' Filter'}),
+		rightNavButton: btnClose,
 		modal: true
 	});
 	self.addEventListener('android:back', function() {
 		
-		if (checkBox.value == false) {
-			app.FilterSettings.SearchName = textSearch.value;
-		} else {
-			app.FilterSettings.SearchName = null;
-		}
-		
-		app.winSearch.update(app.FilterSettings.SearchName);	
+		if (checkChanges() == true) {
+			app.winSearch.update(app.FilterSettings.SearchName);
+				
+		} 
 		self.close();
-		
 		app.winFilter = null;
 		
 	});
@@ -113,11 +117,12 @@ function WinFilter() {
 	});
 	
 	if (Ti.Platform.osname == 'android') {
+		
 		checkBox = Titanium.UI.createSwitch({
 			style: Titanium.UI.Android.SWITCH_STYLE_CHECKBOX,
 			title: '  All, or \n  Search:',
 			color: 'black',
-			value: true,
+			value: app.FilterSettings.SearchName == null ? true : false,
 			top: 0,
 			left: 15,
 			width: 100,
@@ -126,6 +131,8 @@ function WinFilter() {
 		checkBox.addEventListener('change', function(e) {
 			textSearch.blur();
 			if (checkBox.value == true) {
+				textSearch.value = null;
+				tempFilterSettings.SearchName = null;
 				textSearch.enabled = false;
 			} else {
 				textSearch.enabled = true;
@@ -136,6 +143,7 @@ function WinFilter() {
 		
 		rowNameSearch.add(checkBox);
 	} else {
+		
 		tbNameSearch = Ti.UI.iOS.createTabbedBar({
 			left: 10,
 			top:0,
@@ -148,6 +156,8 @@ function WinFilter() {
 		});
 		tbNameSearch.addEventListener('click', function(evt){
 			if (evt.index == 0) {
+				textSearch.value = null;
+				tempFilterSettings.SearchName = null;
 				textSearch.visible = false;
 			} else {
 				textSearch.visible = true;
@@ -178,6 +188,7 @@ function WinFilter() {
 	    enabled: false
 	});
 	
+	Ti.API.info('app.FilterSettings.SearchName: ' + app.FilterSettings.SearchName);
 	var textSearch = Titanium.UI.createTextField({
 		clearButtonMode: Titanium.UI.INPUT_BUTTONMODE_ALWAYS,
 		leftButton: btnSearch,
@@ -185,7 +196,7 @@ function WinFilter() {
 		height: Ti.Platform.osname == 'android' ? 40 : 32,
 		width: 180,
 		left: 130,
-		enabled: Ti.Platform.osname == 'android' ? false : true,
+		enabled: ((app.FilterSettings.SearchName == null && Ti.Platform.osname == 'android') ? false : true),
 		font:{fontSize: '14dp'},
 		hintText: 'enter name',
 		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
@@ -198,10 +209,8 @@ function WinFilter() {
 		textSearch.keyboardToolbarColor = 'gray';	
 		textSearch.keyboardToolbarHeight = 40; 
 	} 
-	textSearch.addEventListener('return', function(evt) {
-		textSearch.blur();
-	});
 	rowNameSearch.add(textSearch);
+	
 	
 	tableView.appendRow(rowNameSearch);
 	
@@ -231,7 +240,7 @@ function WinFilter() {
 			selectionIndicator: true,
 		});
 		pkrIndustry.addEventListener('change', function(evt) {
-			app.FilterSettings.Industry = evt.rowIndex;
+			tempFilterSettings.Industry = evt.rowIndex;
 		});
 		
 		var data = [];
@@ -258,6 +267,9 @@ function WinFilter() {
 			index:app.FilterSettings.Industry,
 			style: Titanium.UI.iPhone.SystemButtonStyle.BAR
 		});
+		tbIndustry.addEventListener('click', function(evt) {
+			tempFilterSettings.Industry = evt.index;
+		});
 		rowIndustryName.add(tbIndustry);
 	}
 	tableView.appendRow(rowIndustryName);
@@ -279,7 +291,7 @@ function WinFilter() {
 	
 	
 	if (Ti.Platform.osname == 'android') {
-		rowIndustryName.height = 40;
+		rowSourceName.height = 40;
 		var pickerList = [{title: 'Dept of Labor', index: '0'}, {title: 'Yelp (local)', index: '1'}, {title: 'Both', index: '2'}];
 		pkrSource = Ti.UI.createPicker({
 			top: 0,
@@ -287,7 +299,7 @@ function WinFilter() {
 			selectionIndicator: true,
 		});
 		pkrSource.addEventListener('change', function(evt) {
-			app.FilterSettings.Source = evt.rowIndex;
+			tempFilterSettings.Source = evt.rowIndex;
 		});
 		
 		var data = [];
@@ -312,6 +324,9 @@ function WinFilter() {
 			index:app.FilterSettings.Source,
 			style: Titanium.UI.iPhone.SystemButtonStyle.BAR
 		});
+		tbSource.addEventListener('click', function(evt) {
+			tempFilterSettings.Source = evt.index;
+		});
 		rowSourceName.add(tbSource);
 	}
 	tableView.appendRow(rowSourceName);
@@ -332,7 +347,7 @@ function WinFilter() {
 	});
 	
 	if (Ti.Platform.osname == 'android') {
-		rowIndustryName.height = 40;
+		rowDOLViolations.height = 40;
 		var pickerList = [{title: 'Violations', index: '0'}, {title: 'No Violations', index: '1'}, {title: 'Both', index: '2'}];
 		pkrViolation = Ti.UI.createPicker({
 			top: 0,
@@ -340,7 +355,7 @@ function WinFilter() {
 			selectionIndicator: true,
 		});
 		pkrViolation.addEventListener('change', function(evt) {
-			app.FilterSettings.Inspections = evt.rowIndex;
+			tempFilterSettings.Inspections = evt.rowIndex;
 		});
 		
 		var data = [];
@@ -365,6 +380,9 @@ function WinFilter() {
 			index:app.FilterSettings.Inspections,
 			style: Titanium.UI.iPhone.SystemButtonStyle.BAR
 		});
+		tbViolation.addEventListener('click', function(evt) {
+			tempFilterSettings.Inspections = evt.index;
+		});
 		rowDOLViolations.add(tbViolation);
 	}
 	tableView.appendRow(rowDOLViolations);
@@ -380,15 +398,15 @@ function WinFilter() {
 	});
 	
 	if (Ti.Platform.osname == 'android') {
-		rowIndustryName.height = 40;
+		rowDOLSource.height = 40;
 		var pickerList = [{title: 'OSHA', index: '0'}, {title: 'WHD', index: '1'}, {title: 'Both', index: '2'}];
 		pkrDOLSource = Ti.UI.createPicker({
 			top: 0,
 			height: 40,
 			selectionIndicator: true,
 		});
-		pkrViolation.addEventListener('change', function(evt) {
-			app.FilterSettings.DolSource = evt.rowIndex;
+		pkrDOLSource.addEventListener('change', function(evt) {
+			tempFilterSettings.DolSource = evt.rowIndex;
 		});
 		
 		var data = [];
@@ -412,11 +430,43 @@ function WinFilter() {
 			index:app.FilterSettings.DolSource,
 			style: Titanium.UI.iPhone.SystemButtonStyle.BAR
 		});
+		tbDOLSource.addEventListener('click', function(evt) {
+			tempFilterSettings.DolSource = evt.index;
+		});
 		rowDOLSource.add(tbDOLSource);
 	}
 	tableView.appendRow(rowDOLSource);
 	
 	this.ui = self;
+	
+	function trim(s) {
+		s = s.replace(/(^\s*)|(\s*$)/gi,"");
+		s = s.replace(/[ ]{2,}/gi," ");
+		s = s.replace(/\n /,"\n");
+		return s;
+	}
+	
+	function checkChanges() {
+		var filterSettingsChanged = false;
+		
+		textSearch.value = trim(textSearch.value);
+		
+		if (textSearch.value == '') {
+			tempFilterSettings.SearchName = null;
+		} else {
+			tempFilterSettings.SearchName = textSearch.value;
+		}
+		
+		for (var key in app.FilterSettings) {
+			if (app.FilterSettings[key] != tempFilterSettings[key]) {
+				filterSettingsChanged = true;
+				app.FilterSettings[key] = tempFilterSettings[key];
+				
+			} 
+		}
+		
+		return filterSettingsChanged;
+	}
 	
 	function createIconRow(buttonWidth, iconImages) {
     	

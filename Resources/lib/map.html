@@ -502,8 +502,8 @@
 		});   
 		
 		// Init Food markers
-		setLayerOSHAFood('');
-		setLayerWHDFood('');
+		//setLayerOSHAFood('');
+		//setLayerWHDFood('');
 		
 	}
 
@@ -525,9 +525,15 @@
 					setLocalZoom();
 					
 					Ti.App.fireEvent('geocodeSuccess');
-				} else {
-					alert('Location not found. Try another.');
-				}
+				} else if (status == google.maps.GeocoderStatus.ZERO_RESULTS) {
+					alert('Location not found.');
+				} else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
+					alert('Alert: Google location services quota has been exceeded.');
+				} else if (status == google.maps.GeocoderStatus.REQUEST_DENIED) {
+					alert('Alert: Google location services denied request.');
+				} else if (status == google.maps.GeocoderStatus.INVALID_REQUEST) {
+					alert('Alert: Invalid query.');
+				} 
 			}
 		);
 	

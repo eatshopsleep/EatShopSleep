@@ -15,7 +15,6 @@ exports.searchRequest = function(term, address, zip, category_filter, ll, succes
 		term = term.replace(/-/g, ' ');
 		term = term.replace(/\(/g, ' ');
 		term = term.replace(/\)/g, ' ');
-		Ti.API.info(term);
 	}
 	
 	var auth = { 
@@ -88,6 +87,7 @@ exports.searchRequest = function(term, address, zip, category_filter, ll, succes
         
         success(this.responseText);
         
+        // WANT TO PARSE HERE BUT ANDROID WONT SEE VALUES: TIMOB-5499
     	//var jsonResponse = JSON.parse(this.responseText);
     	//success(jsonResponse);	
         
