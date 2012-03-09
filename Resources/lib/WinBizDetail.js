@@ -6,11 +6,9 @@ function WinBizDetail(data) {
 		backgroundColor: 'white',
 		tabBarHidden: true,
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
-		//left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
 		barColor: app.HEADER_COLOR,
 	});
 	self.addEventListener('close', function() {	
-		//winDOLMap.win.hideNavBar();
 		self = null;
 		app.winBizDetail = null;
 	});
@@ -476,7 +474,6 @@ function WinBizDetail(data) {
 			height: 17,
 			bottom: 5,
 			left: 10,
-			//width: 84
 			width: Ti.Platform.osname == 'android' ? null : 100,
 			touchEnabled: false
 		});
@@ -498,7 +495,6 @@ function WinBizDetail(data) {
 			right: 5,
 			height: 27,
 			width: 51,
-			//top: 0,
 			bottom: 5,
 			touchEnabled: false
 		});
@@ -523,7 +519,6 @@ function WinBizDetail(data) {
 				bottom: 5,
 				height: 'auto',
 				width: 'auto',
-			    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14, fontWeight:'bold'},
 			    font:app.Font.h2,
 			    textAlign:'left',
 			    color: 'white',
@@ -706,7 +701,6 @@ function WinBizDetail(data) {
 							bottom: 5,
 							height: 'auto',
 							width: 'auto',
-						    //font:{fontSize: Ti.Platform.osname == 'android' ? 18 : 16, fontWeight:'bold'},
 						    font:app.Font.h2,
 						    textAlign:'left',
 						    color: 'white',
@@ -759,8 +753,6 @@ function WinBizDetail(data) {
 						});
 						rowCustomerReviews.addEventListener('click', function(evt) {
 							if (jsonResponse.businesses[0].mobile_url) {
-								//vwYelpBizWebsite.url = jsonResponse.businesses[0].mobile_url;
-								//tgSearch.activeTab.open(winYelpBizWebsite,{animated:true});
 								
 								var WinYelpBiz = require('/lib/WinYelpBiz');
 								app.winYelpBiz = new WinYelpBiz(jsonResponse.businesses[0].mobile_url,false);
@@ -780,7 +772,6 @@ function WinBizDetail(data) {
 							height: 17,
 							bottom: 5,
 							left: 10,
-							//width: 84
 							width: Ti.Platform.osname == 'android' ? null : 100,
 							touchEnabled: false
 						});
@@ -802,7 +793,6 @@ function WinBizDetail(data) {
 							right: 5,
 							height: 27,
 							width: 51,
-							//top: 0,
 							bottom: 5,
 							touchEnabled: false
 						});

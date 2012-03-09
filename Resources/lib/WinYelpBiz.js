@@ -12,14 +12,11 @@ function WinYelpBiz(mobile_url,hideNavOnClose) {
 		tabBarHidden: true,
 		titleControl: vwButtons,
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
-		//left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
 		backgroundColor: 'white',
 		barColor: app.HEADER_COLOR
 	});
 	self.addEventListener('close', function() {	
-		if (hideNavOnClose) {
-			//winDOLMap.win.hideNavBar();
-		}
+		
 		app.winSearch.ui.barColor = app.HEADER_COLOR;
 		
 		app.winYelpBiz = null;

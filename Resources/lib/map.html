@@ -19,7 +19,6 @@
 	var yelpFoodMarkers = [];
 	var yelpRetailMarkers = [];
 	var yelpHospitalityMarkers = [];
-	//var localZoom = 14;
 	var localZoom = 13;
 	
 	function setYelpMarkers(industry,icon,array,evt,searchName) {
@@ -160,7 +159,6 @@
 		
 		
 		var infoWindowHtml = "<div class='googft-info-window' style='font-family: sans-serif; width: 100%; '>" +
-			//"<div style='padding-bottom: 2px;'><a style='color:blue; text-decoration:underline; font-weight:bold; font-size:15px; ' onclick='Ti.App.fireEvent(\"oshaMarkerClicked\", {" +
 			"<div><a style='color:blue; text-decoration:underline; font-weight:bold; font-size:100%; ' onclick='Ti.App.fireEvent(\"oshaMarkerClicked\", {" +
 			"industry: \"" + industry + "\"," +
 			"activity_nr: \"" + evt.row.activity_nr.value + "\"," +
@@ -176,12 +174,9 @@
 			"site_state: \"" + evt.row.site_state.value + "\"," +
 			"site_zip: \"" + evt.row.site_zip.value + "\" });'>" +
 			evt.row.estab_name.value + "</a></div>" +
-			//"<div style='color: #666666; font-size:13px;'>" + evt.row.site_address.value + ", " + evt.row.site_city.value + ", " + evt.row.site_state.value + "</div>" +
 			"<div style='font-size:87%;'>" + evt.row.site_address.value + ", " + evt.row.site_city.value + ", " + evt.row.site_state.value + "</div>" +
-			//"<div style='font-size:13px; '><img style='vertical-align: middle;' width='22' height='22' src='" + industryIcon + "'>" +
 			"<img style='margin-right: 4px; float: left;' width='32' height='32' src='" + industryIcon + "'>" +
 			"<div style='color: #666666; font-size:87%; '>" + violation + "</div>" +
-			//"<div style='font-size:12px; font-style:italic; color: #999999; padding-top: 5px;'>(Dept of Labor/OSHA)</div>" +
 			"<div style='font-size:80%; font-style:italic; color: #999999; '>Dept of Labor/OSHA</div>" +
 			"</span>";
 		
@@ -256,7 +251,6 @@
 		
 		
 		var infoWindowHtml = "<span class='googft-info-window' style='font-family: sans-serif'>" +
-			//"<div style='padding-bottom: 2px;'><a style='color:blue; text-decoration:underline; font-weight:bold; font-size:15px;' onclick='Ti.App.fireEvent(\"whdMarkerClicked\", {" +
 			"<div><a style='color:blue; text-decoration:underline; font-weight:bold; font-size:100%; ' onclick='Ti.App.fireEvent(\"whdMarkerClicked\", {" +
 			"industry: \"" + industry + "\"," +
 			"trade_nm: \"" + name + "\"," +
@@ -283,13 +277,9 @@
 			"st_cd: \"" + evt.row.st_cd.value + "\"," +
 			"zip_cd: \"" + evt.row.zip_cd.value + "\" });'>" +
 			evt.row.trade_nm.value + "</a></div>" +
-			//"<div style='color: #666666; font-size:13px;'>" + evt.row.street_addr_1_txt.value + ", " + evt.row.city_nm.value + ", " + evt.row.st_cd.value + "</div>" +
 			"<div style='font-size:87%;'>" + evt.row.street_addr_1_txt.value + ", " + evt.row.city_nm.value + ", " + evt.row.st_cd.value + "</div>" +
-			//"<img style='vertical-align: middle;' width='22' height='22' src='" + industryIcon + "'>" +
 			"<img style='margin-right: 4px; float: left;' width='32' height='32' src='" + industryIcon + "'>" +
-			//"<div style='font-size:13px; '>" + violation + "</div>" +
 			"<div style='color: #666666; font-size:87%; '>" + violation + "</div>" +
-			//"<div style='font-size:12px; font-style:italic; color: #999999; padding-top: 5px;'>(Dept of Labor/WHD)</div>" +
 			"<div style='font-size:80%; font-style:italic; color: #999999; '>Dept of Labor/WHD</div>" +
 			"</span>";
  
@@ -388,7 +378,6 @@
 		    }  
 		});
 		layerWHD_food.setMap(map);
-		//setWHDLayer(layerWHD_food,'col22','1377910',dolArea,dolInspections);
 	}
 	
 	function setLayerWHDRetail(where) {
@@ -400,7 +389,6 @@
 		    }  
 		});
 		layerWHD_retail.setMap(map);
-		//setWHDLayer(layerWHD_retail,'col22','1377447',dolArea,dolInspections);
 	}
 	
 	function setLayerWHDHospitality(where) {
@@ -412,7 +400,6 @@
 		    }  
 		});
 		layerWHD_hospitality.setMap(map);
-		//setWHDLayer(layerWHD_hospitality,'col22','1377445',dolArea,dolInspections);
 	}
 	
 	function setLayerWHDFull(where) {
@@ -501,9 +488,6 @@
 			onWhdLayerClick(evt,'');
 		});   
 		
-		// Init Food markers
-		//setLayerOSHAFood('');
-		//setLayerWHDFood('');
 		
 	}
 
@@ -561,21 +545,18 @@
 	Ti.App.addEventListener('setYelpFoodMarkers',function(evt) {
 		var jsonResponse = JSON.parse(evt.response);
 		
-		//setYelpMarkers('Food','../images/yellow_bubble_yelp.png',yelpFoodMarkers,evt.response,evt.searchName);
 		setYelpMarkers('Food','../images/yellow_bubble_yelp.png',yelpFoodMarkers,jsonResponse,evt.searchName);
 	});
 	
 	Ti.App.addEventListener('setYelpRetailMarkers',function(evt) {
 		var jsonResponse = JSON.parse(evt.response);
 		
-		//setYelpMarkers('Retail','../images/blue_bubble_yelp.png',yelpRetailMarkers,evt.response,evt.searchName);
 		setYelpMarkers('Retail','../images/blue_bubble_yelp.png',yelpRetailMarkers,jsonResponse,evt.searchName);
 	});
 	
 	Ti.App.addEventListener('setYelpHospitalityMarkers',function(evt) {
 		var jsonResponse = JSON.parse(evt.response);
 		
-		//setYelpMarkers('Hospitality','../images/purple_bubble_yelp.png',yelpHospitalityMarkers,evt.response,evt.searchName);
 		setYelpMarkers('Hospitality','../images/purple_bubble_yelp.png',yelpHospitalityMarkers,jsonResponse,evt.searchName);
 	});
 	
@@ -585,8 +566,6 @@
 <body onload="initialize()">
   	
   	<div id="map_canvas" style="width:100%; height:100%"></div>
-  	<!--
-  	<iframe width="500px" height="300px" scrolling="no"  src="http://www.google.com/fusiontables/embedviz?viz=MAP&q=select+col22+from+1361750+&h=false&lat=46.72948503627198&lng=-113.29415399999999&z=2&t=1&l=col22"></iframe>
-  	-->
+  	
 </body>
 </html>

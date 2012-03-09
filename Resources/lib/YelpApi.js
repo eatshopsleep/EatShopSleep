@@ -42,12 +42,7 @@ exports.searchRequest = function(term, address, zip, category_filter, ll, succes
 	if (category_filter) {
 		parameters.push(['category_filter', category_filter]);
 	}
-	//if (bounds) {
-	//	parameters.push(['bounds', bounds.sw_latitude + ',' + bounds.sw_longitude + '|' + bounds.ne_latitude + ',' + bounds.ne_longitude]);	
-	//}
-	//else {
-	//	parameters.push(['location', address + ',' + zip]);	
-	//}
+	
 	if (ll) {
 		parameters.push(['ll', ll]);	
 	}
@@ -77,7 +72,6 @@ exports.searchRequest = function(term, address, zip, category_filter, ll, succes
 	
 	xhr.open('GET', finalUrl);
     xhr.onerror = function(evt){
-    	//Titanium.App.fireEvent('hide_indicator');
         Ti.API.error("API ERROR " + evt.error);
         error(evt);
         
@@ -92,8 +86,7 @@ exports.searchRequest = function(term, address, zip, category_filter, ll, succes
     	//success(jsonResponse);	
         
     };
-    
-    //Titanium.App.fireEvent('show_indicator');        
+         
     xhr.send();
     
 };

@@ -68,7 +68,6 @@ function WinLocation() {
 	var vwLocation = Ti.UI.createView({
 		height: 'auto',
 		top: Ti.Platform.osname == 'android' ? 84 : 40,
-		//width: Titanium.Platform.displayCaps.platformWidth-20
 		width: self.width-20
 	});
 	

@@ -74,21 +74,16 @@ function WinSearch() {
 	    scalesPageToFit: true,
 	    visible: true
 	});
-	/*googleMap.addEventListener('beforeload', function(evt) {
-		app.vwIndicator.show(self);
-	});*/
 	googleMap.addEventListener('load', function(evt) {
 		wvDolList.url = '/lib/gviz.html';
 		
 	});
 	googleMap.addEventListener('error', function(evt) {
-		//app.vwIndicator.hide(self);
 		alert('Webpage not available.');
 	});
 	self.add(googleMap);
 	
 	var wvDolList = Titanium.UI.createWebView({
-	    //url: '/lib/gviz.html',
 	    top: 0,
 	    left: 0,
 	    visible: false
@@ -229,10 +224,8 @@ function WinSearch() {
 				googleMapVisible = true;
 				if (hideRedoButton) {
 					btnRedoSearch.visible = false;
-					//toolbarRedo.animate({opacity: 0, duration:300});	
 				} else {
 					btnRedoSearch.visible = true;
-					//toolbarRedo.animate({opacity: 1, duration:300});
 				}
 				
 			} else {
@@ -240,7 +233,6 @@ function WinSearch() {
 				tvDolList.animate({opacity: 1, duration:300});
 				googleMap.animate({opacity: 0, duration:300});
 				btnRedoSearch.visible = false;
-				//toolbarRedo.animate({opacity: 0, duration:300});
 			}
 		});
 		
@@ -260,8 +252,6 @@ function WinSearch() {
 			items:[btnNav,flexSpace,tabBar,flexSpace,btnFilter],
 			bottom:0,
 			borderWidth:0,
-			//borderTop:false,
-			//borderBottom:true,
 			barColor: app.HEADER_COLOR
 		});	
 		self.add(toolbarBottom);
@@ -285,7 +275,6 @@ function WinSearch() {
 		var vwYelpHeader = Ti.UI.createView({
 			height:30,
 			backgroundColor: 'black'
-			//opacity: 0.5
 		});
 		
 		var industryIcon = '';
@@ -305,8 +294,6 @@ function WinSearch() {
 		vwYelpHeader.add(imgIndustryIcon);
 		
 		var lblYelpHeader = Ti.UI.createLabel({
-			//borderColor: 'white',
-		    //top:5, bottom:5, 
 		    left: imgIndustryIcon.left + imgIndustryIcon.width + 10,
 		    width: 'auto',
 		    height:'auto',
@@ -321,14 +308,10 @@ function WinSearch() {
 			right: 5,
 			height: 27,
 			width: 51
-			//top: 0,
-			//bottom: 5
 		});
 		vwYelpHeader.add(imgYelpLogo);
 		
 		var lblYelpSource = Ti.UI.createLabel({
-			//borderColor: 'white',
-		    //top:5, bottom:5, 
 		    right:imgYelpLogo.width + 10, 
 		    width: 'auto',
 		    height:'auto',
@@ -397,8 +380,6 @@ function WinSearch() {
 				var lblBizName = Ti.UI.createLabel({
 					text: evt.businesses[i].name,
 					color: 'black',
-					//top: Ti.Platform.osname == 'android' ? 2 : 5,
-					//height: Ti.Platform.osname == 'android' ? 20 : 15,
 					top: 5,
 					height: 18,
 					left: 10,
@@ -415,10 +396,8 @@ function WinSearch() {
 					image: evt.businesses[i].rating_img_url_small,
 					right: 5,
 					height: 10,
-					//top: 5,
 					width: 50,
 					touchEnabled: false
-					//borderColor: 'black'
 				});
 				rowDOL.add(imgRating);
 				
@@ -436,18 +415,13 @@ function WinSearch() {
 				var lblBizAddress = Ti.UI.createLabel({
 					text: address,
 					color: 'gray',
-					//borderColor: 'black',
-					//top: Ti.Platform.osname == 'android' ? 22 : 25,
 					top: 23,
-					//height: Ti.Platform.osname == 'android' ? 20 : 10,
 					height: 15,
 					left: 10,
 					touchEnabled: false,
-					//bottom: Ti.Platform.osname == 'android' ? 2 : 5,
 					bottom: 5,
 					width: Titanium.Platform.displayCaps.platformWidth - 100,
 					textAlign: 'left',
-				    //font:{fontSize: Ti.Platform.osname == 'android' ? 14 : 10}
 				    font: app.Font.p2
 				    
 				});
@@ -580,14 +554,6 @@ function WinSearch() {
 	this.whdMarkerClicked = whdMarkerClicked;
 	
 	function getLocalYelp(evt) {
-		//googleMap.evalJS('setLocalZoom();')
-		
-		//var bounds = {sw_latitude: googleMap.evalJS('getBoundsSWLatitude();'),
-		//		sw_longitude: googleMap.evalJS('getBoundsSWLongitude();'),
-		//		ne_latitude: googleMap.evalJS('getBoundsNELatitude();'),
-		//		ne_longitude: googleMap.evalJS('getBoundsNELongitude();')};
-		
-		//var ll = googleMap.evalJS('getMapCenterLat();')	+ ',' + googleMap.evalJS('getMapCenterLng();');
 		
 		var food_category = 'food,restaurants';
 		var retail_category = 'shopping';
@@ -783,7 +749,6 @@ function WinSearch() {
 		var vwHeader = Ti.UI.createView({
 			height:30,
 			backgroundColor: 'black'
-			//opacity: 0.5
 		});
 		
 		var industryIcon = '';
@@ -795,8 +760,6 @@ function WinSearch() {
 			industryIcon = '/images/hospitality_purple_matte.png';
 		} 
 		var imgIndustryIcon = Ti.UI.createImageView({
-			//borderColor: 'white',
-		    //top:5, bottom:5, 
 		    left:10, 
 		    width: 22,
 		    height:22,
@@ -813,14 +776,7 @@ function WinSearch() {
 		    color:'white'
 		});
 		vwHeader.add(lblHeader);
-		/*
-		var imgDOLLogo = Ti.UI.createImageView({
-			image:'dol_seal_small.png',
-			right: 5,
-			height: 27,
-			width: 27
-		});
-		*/
+		
 		var imgDOLLogo;
 		if (evt.source == 'OSHA') {
 			var imgDOLLogo = Ti.UI.createImageView({
@@ -866,12 +822,7 @@ function WinSearch() {
 			rowHeader.add(vwHeader);
 			section.add(rowHeader);
 		}
-		
-		//if (evt.source == 'OSHA') {
-		//	section.headerTitle = "Source: Dept of Labor, OSHA";	
-		//} else {
-		//	section.headerTitle = "Source: Dept of Labor, WHD";
-		//}
+	
 		
 		for (var i in json.rows) {
 			var data, name, address, violation;
@@ -966,8 +917,6 @@ function WinSearch() {
 			var lblBizName = Ti.UI.createLabel({
 				text: name,
 				color: 'black',
-				//top: Ti.Platform.osname == 'android' ? 2 : 5,
-				//height: Ti.Platform.osname == 'android' ? 20 : 15,
 				top: 5,
 				height: 18,
 				left: 10,
@@ -979,13 +928,10 @@ function WinSearch() {
 			rowDOL.add(lblBizName);
 			
 			var imgViolation = Ti.UI.createImageView({
-				//image:'food_green.png',
 				right: 5,
 				height: 30,
-				//top: 5,
 				width: 30,
 				touchEnabled: false
-				//borderColor: 'black'
 			});
 			
 			if (violation == 0) {
@@ -1234,7 +1180,6 @@ function WinSearch() {
 				googleMap.evalJS('clearLayers();');
 				tvDolList.data = [];
 				
-				//Ti.App.fireEvent('getLocalYelp', {ll: ll});
 				getLocalYelp({ll: ll});
 				break;
 			case app.Filter.SOURCE_ALL:		
@@ -1243,7 +1188,6 @@ function WinSearch() {
 				tvDolList.data = [];
 				
 				sourceDOL(name,ll);
-				//Ti.App.fireEvent('getLocalYelp', {ll: ll});
 				getLocalYelp({ll: ll});
 				break;
 			}

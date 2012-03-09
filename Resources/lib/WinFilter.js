@@ -1,6 +1,5 @@
 function WinFilter() {
 	
-	//var bb = null;
 	var checkBox, tbNameSearch, tbIndustry, pkrIndustry, tbSource, pkrSource, tbViolation, pkrViolation, tbDOLSource, pkrDOLSource, tbDOLArea, winWidth;
 	
 	var app = require('/lib/globals');
@@ -9,30 +8,6 @@ function WinFilter() {
 		tempFilterSettings[key] = app.FilterSettings[key];
 	}
 	
-	
-	/*
-	if (Ti.Platform.osname != 'android') {
-		bb = Titanium.UI.createButtonBar({
-			labels:['Apply', 'Cancel'],
-			backgroundColor:app.HEADER_COLOR
-		});
-		bb.addEventListener('click', function(evt) {
-			if (evt.index == 0) {
-				
-				if (checkChanges() == true) {
-					app.winSearch.update(app.FilterSettings.SearchName);	
-				}
-				
-				self.close();
-				app.winFilter = null;
-			} else {
-				self.close();
-				app.winFilter = null;
-			}
-			
-		});
-	}
-	*/
 	var btnClose = Ti.UI.createButton({
 		title:'Go'
 	});
@@ -70,7 +45,6 @@ function WinFilter() {
 		winWidth = 540;
 	} else {
 		winWidth = Titanium.Platform.displayCaps.platformWidth;
-		//winWidth = self.width;
 	}
 	
 	if (Ti.Platform.osname == 'android') {
@@ -136,58 +110,7 @@ function WinFilter() {
 		selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
 		backgroundSelectedColor: 'white'
 	});
-	/*
-	if (Ti.Platform.osname == 'android') {
-		
-		checkBox = Titanium.UI.createSwitch({
-			style: Titanium.UI.Android.SWITCH_STYLE_CHECKBOX,
-			title: '  All, or \n  Search:',
-			color: 'black',
-			value: app.FilterSettings.SearchName == null ? true : false,
-			top: 0,
-			left: 15,
-			width: 100,
-			font:{fontSize:'16dp'}
-		});
-		checkBox.addEventListener('change', function(e) {
-			textSearch.blur();
-			if (checkBox.value == true) {
-				textSearch.value = null;
-				tempFilterSettings.SearchName = null;
-				textSearch.enabled = false;
-			} else {
-				textSearch.enabled = true;
-				
-				//textSearch.focus();
-			}
-		});
-		
-		rowNameSearch.add(checkBox);
-	} else {
-		
-		tbNameSearch = Ti.UI.iOS.createTabbedBar({
-			left: 10,
-			top:0,
-			width: 100,
-			height: 30,
-			labels:[{title: 'All', width: 50},{title:'Search:',width:60}],
-			backgroundColor: app.HEADER_COLOR,
-			index: ((app.FilterSettings.SearchName == null) ? 0 : 1),
-			style:Titanium.UI.iPhone.SystemButtonStyle.BAR
-		});
-		tbNameSearch.addEventListener('click', function(evt){
-			if (evt.index == 0) {
-				textSearch.value = null;
-				tempFilterSettings.SearchName = null;
-				textSearch.visible = false;
-			} else {
-				textSearch.visible = true;
-				textSearch.focus();
-			}
-		});
-		rowNameSearch.add(tbNameSearch);
-	}
-	*/
+	
 	var btnCancel = Titanium.UI.createButton({
 		title: 'Cancel',
 		style:Titanium.UI.iPhone.SystemButtonStyle.BORDERED
@@ -201,7 +124,6 @@ function WinFilter() {
 	});
 	
 	var btnSearch = Ti.UI.createButton({
-	    //systemButton:Titanium.UI.iPhone.SystemButton.SEARCH
 	    backgroundDisabledImage: '/images/magnifying_glass.png',
 	    backgroundImage: '/images/magnifying_glass.png',
 	    width: 14,
@@ -215,15 +137,11 @@ function WinFilter() {
 		leftButton: btnSearch,
 		leftButtonMode: Titanium.UI.INPUT_BUTTONMODE_ALWAYS,
 		height: Ti.Platform.osname == 'android' ? 40 : 32,
-		//width: 180,
 		right: 10,
-		//left: 130,
 		left: 10,
-		//enabled: ((app.FilterSettings.SearchName == null && Ti.Platform.osname == 'android') ? false : true),
 		font:app.Font.input1,
 		hintText: 'enter name',
 		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
-		//visible: ((app.FilterSettings.SearchName == null && Ti.Platform.osname != 'android') ? false : true),
 		returnKeyType: Titanium.UI.RETURNKEY_DONE,
 		value: app.FilterSettings.SearchName
 	});
@@ -249,7 +167,6 @@ function WinFilter() {
 	var rowIndustryName = Ti.UI.createTableViewRow({
 		hasChild:false,
 		height:'auto',
-		//className: 'selection',
 		selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
 		backgroundSelectedColor: 'white'
 	});
@@ -307,7 +224,6 @@ function WinFilter() {
 	var rowSourceName = Ti.UI.createTableViewRow({
 		hasChild:false,
 		height:'auto',
-		//className: 'selection',
 		selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
 		backgroundSelectedColor: 'white'
 	});
@@ -364,7 +280,6 @@ function WinFilter() {
 	var rowDOLViolations = Ti.UI.createTableViewRow({
 		hasChild:false,
 		height:'auto',
-		//className: 'selection',
 		selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
 		backgroundSelectedColor: 'white'
 	});
@@ -415,7 +330,6 @@ function WinFilter() {
 	var rowDOLSource = Ti.UI.createTableViewRow({
 		hasChild:false,
 		height:'auto',
-		//className: 'selection',
 		selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
 		backgroundSelectedColor: 'white'
 	});
@@ -505,7 +419,6 @@ function WinFilter() {
 			top: 0,
 			height: 'auto',
 			left: 10,
-			//width: Titanium.Platform.displayCaps.platformWidth-20
 			width: winWidth-20,
 			layout: Ti.Platform.osname == 'android' ? 'horizontal' : 'absolute'
 		});	
@@ -566,7 +479,6 @@ function WinFilter() {
 			bottom: 0,
 			height: Ti.Platform.osname == 'android' ? 30 : 'auto',
 			left: 10,
-			//width: winWidth - 20,
 			textAlign: 'left',
 		    font:app.Font.h2
 		});

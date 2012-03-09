@@ -195,7 +195,6 @@ function WinTakeAction(inTabGroup) {
 				items:[btnHome,flexSpace,vwButtons,flexSpace,vwLogo],
 				top:0,
 				borderWidth: 0,
-				//height: 44,
 				barColor: app.HEADER_COLOR
 			});	
 			self.add(toolbarTop);
@@ -207,23 +206,18 @@ function WinTakeAction(inTabGroup) {
 		];
 		
 		var tabBar = Ti.UI.iOS.createTabbedBar({
-			//labels:[{title: 'OSHA', width: 50},{title:'WHD',width:50}],
 			labels: buttonObjects,
 			style: Titanium.UI.iPhone.SystemButtonStyle.PLAIN,
-			//style: Titanium.UI.iPhone.SystemButtonStyle.BAR,
 			backgroundColor: 'white',
-			//backgroundColor: app.HEADER_COLOR,
 			index:0,
 			height: 28,
 			width: 'auto'
 		});
 		tabBar.addEventListener('click', function(evt){
 			if (evt.index == 0) {
-				//winAction.wvAction.url = 'osha.htm';
 				wvOSHA.visible = true;
 				wvWHD.visible = false;
 			} else {
-				//winAction.wvAction.url = 'whd.htm';
 				wvOSHA.visible = false;
 				wvWHD.visible = true;
 			}
@@ -233,7 +227,6 @@ function WinTakeAction(inTabGroup) {
 			items:[flexSpace,tabBar,flexSpace],
 			bottom:0,
 			borderWidth: 0,
-			//height: 44,
 			barColor: app.HEADER_COLOR
 		});	
 		self.add(toolbarBottom);

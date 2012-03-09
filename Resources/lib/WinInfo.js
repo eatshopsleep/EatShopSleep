@@ -36,7 +36,6 @@ function WinInfo() {
 			items:[btnHome],
 			top:0,
 			borderWidth: 0,
-			//height: 44,
 			barColor: app.HEADER_COLOR
 		});	
 		self.add(toolbarTop);
@@ -78,9 +77,7 @@ function WinInfo() {
 			height: 'auto',
 			left: 10,
 			width: Titanium.Platform.displayCaps.platformWidth - 20,
-			//width: 'auto',
 			textAlign: 'left',
-		    //font:{fontSize: Ti.Platform.osname == 'android' ? 18 : 16, fontWeight:'bold'}
 		    font:app.Font.h2
 		});
 		row.add(lbl1);

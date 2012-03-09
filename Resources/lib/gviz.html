@@ -38,10 +38,8 @@ function setLayerOSHAFood(where,ll) {
 	queryText = encodeURIComponent(queryText);
 	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
 	
-	//Titanium.App.fireEvent('show_indicator');
 	
 	query.send(function(response){
-		//Titanium.App.fireEvent('hide_indicator');
 		var json = response.getDataTable().toJSON();
 
 		Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: 'Food'});
@@ -64,11 +62,8 @@ function setLayerOSHARetail(where,ll) {
 	
 	queryText = encodeURIComponent(queryText);
 	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
-	
-	//Titanium.App.fireEvent('show_indicator');
-	
+		
 	query.send(function(response){
-		//Titanium.App.fireEvent('hide_indicator');
 		var json = response.getDataTable().toJSON();
 
 		Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: 'Retail'});
@@ -92,9 +87,7 @@ function setLayerOSHAHospitality(where,ll) {
 	queryText = encodeURIComponent(queryText);
 	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
 	
-	//Titanium.App.fireEvent('show_indicator');
 	query.send(function(response){
-		//Titanium.App.fireEvent('hide_indicator');
 		var json = response.getDataTable().toJSON();
 
 		Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: 'Hospitality'});
@@ -117,9 +110,7 @@ function setLayerWHDFood(where,ll) {
 	queryText = encodeURIComponent(queryText);
 	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
 	
-	//Titanium.App.fireEvent('show_indicator');
 	query.send(function(response){
-		//Titanium.App.fireEvent('hide_indicator');
 		var json = response.getDataTable().toJSON();
 
 		Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: 'Food'});
@@ -142,9 +133,7 @@ function setLayerWHDRetail(where,ll) {
 	queryText = encodeURIComponent(queryText);
 	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
 	
-	//Titanium.App.fireEvent('show_indicator');
 	query.send(function(response){
-		//Titanium.App.fireEvent('hide_indicator');
 		var json = response.getDataTable().toJSON();
 
 		Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: 'Retail'});
@@ -167,9 +156,7 @@ function setLayerWHDHospitality(where,ll) {
 	queryText = encodeURIComponent(queryText);
 	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
 	
-	//Titanium.App.fireEvent('show_indicator');
 	query.send(function(response){
-	//	Titanium.App.fireEvent('hide_indicator');
 		var json = response.getDataTable().toJSON();
 		Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: 'Hospitality'});
 		
@@ -180,18 +167,14 @@ function setLayerWHDHospitality(where,ll) {
 function getOSHAData(response) {
 	var json = response.getDataTable().toJSON();
 	Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: industry});
-	//Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA'});
 }
 
 function getWHDData(response) {
 	var json = response.getDataTable().toJSON();
 	Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: industry});
-	//Ti.App.fireEvent('getDOLList', {response: json, source:'WHD'});
 }
 
 function init() {
-	//setLayerOSHAFood('', defaultLatlng);
-	//setLayerWHDFood('', defaultLatlng);
 	
 	
 }

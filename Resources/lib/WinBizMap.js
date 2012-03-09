@@ -14,7 +14,6 @@ function WinBizMap(address, city, state) {
 		backgroundColor: 'white',
 		barColor: app.HEADER_COLOR,
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
-		//left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
 	});
 	self.addEventListener('close', function() {	
 		app.winSearch.ui.barColor = app.HEADER_COLOR;
@@ -49,7 +48,6 @@ function WinBizMap(address, city, state) {
 	btnBack = Ti.UI.createButton({
 		backgroundImage: '/images/back_arrow.png',
 		backgroundSelectedImage: '/images/back_arrow_disabled.png',
-		//top: Ti.Platform.osname == 'android' ? null : 0,
 		left: Ti.Platform.osname == 'android' ? null : 0,
 		center: Ti.Platform.osname == 'android' ? Ti.Platform.displayCaps.platformWidth/2 - 50 : null,
 		width: 50,
@@ -65,7 +63,6 @@ function WinBizMap(address, city, state) {
 		backgroundImage: '/images/forward_arrow.png',
 		backgroundSelectedImage: '/images/forward_arrow_disabled.png',
 		enabled: true,
-		//top: Ti.Platform.osname == 'android' ? null : 0,
 		left: Ti.Platform.osname == 'android' ? null : btnBack.width + 25,
 		center: Ti.Platform.osname == 'android' ? Ti.Platform.displayCaps.platformWidth/2 + 50 : null,
 		width: 50,

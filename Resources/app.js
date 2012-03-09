@@ -71,19 +71,7 @@ Ti.App.addEventListener('whdMarkerClicked', function(evt){
 		app.winSearch.whdMarkerClicked(evt);
 	}
 });	
-/*
-Ti.App.addEventListener('getYelpList', function(evt){
-	if (app.winSearch) {
-		app.winSearch.getYelpList(evt);
-	}
-});
 
-Ti.App.addEventListener('getLocalYelp',function(evt) {
-	if (app.winSearch) {
-		app.winSearch.getLocalYelp(evt);
-	}
-});
-*/
 Ti.App.addEventListener('getDOLList',function(evt) {
 	if (app.winSearch) {
 		app.winSearch.getDOLList(evt);

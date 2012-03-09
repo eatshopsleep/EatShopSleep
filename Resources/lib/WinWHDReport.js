@@ -2,9 +2,6 @@ function WinWHDReport(whd_data) {
 	var app = require('/lib/globals');
 	
 	var vwLogo = Ti.UI.createView({
-		//backgroundImage: 'dol_seal_small.png',
-		//width: 32,
-		//height: 32
 		backgroundImage:'/images/whd_logo_small.png',
 		height: 20,
 		width: 52,
@@ -17,7 +14,6 @@ function WinWHDReport(whd_data) {
 		backgroundColor: 'white',
 		tabBarHidden: true,
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
-		//left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
 		titleControl: null,
 		rightNavButton: vwLogo,
 		barColor: app.HEADER_COLOR
@@ -38,7 +34,6 @@ function WinWHDReport(whd_data) {
 	var tvReport = Titanium.UI.createTableView({
 		separatorStyle: Titanium.UI.iPhone.TableViewSeparatorStyle,
 		top: 0,
-		//top: lblHeader.height,
 		visible: true,
 		separatorColor: 'transparent'
 	});
@@ -100,7 +95,6 @@ function WinWHDReport(whd_data) {
 			height: 'auto',
 			left: 10,
 			width: Titanium.Platform.displayCaps.platformWidth - 20,
-			//width: 'auto',
 			textAlign: 'left',
 		    font:app.Font.h2
 		});
@@ -127,7 +121,6 @@ function WinWHDReport(whd_data) {
 			height: 'auto',
 			left: 10,
 			width: Titanium.Platform.displayCaps.platformWidth - 20,
-			//width: 'auto',
 			textAlign: 'left',
 		    font:app.Font.p1
 		});
