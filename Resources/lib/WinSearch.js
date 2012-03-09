@@ -128,7 +128,7 @@ function WinSearch() {
 			height: 34,
 			width: 54,
 			textAlign: 'center',
-			font:{fontSize:'14dp', fontWeight:'bold'},
+			font:app.Font.button1,
 			backgroundImage: '/images/toolbar_button_54x34.png',
 			backgroundSelectedImage: '/images/toolbar_button_54x34_pressed.png',
 		});
@@ -140,18 +140,18 @@ function WinSearch() {
 		});
 		
 		var btnMap = Titanium.UI.createLabel({
-			text: 'Map',
+			text: 'List',
 			color: 'white',
 			height: 34,
 			width: 54,
 			textAlign: 'center',
-			font:{fontSize:'14dp', fontWeight:'bold'},
+			font:app.Font.button1,
 			backgroundImage: '/images/toolbar_button_54x34.png',
 			backgroundSelectedImage: '/images/toolbar_button_54x34_pressed.png',
-			center: Titanium.Platform.displayCaps.platformWidth/2 - 30
 		});
 		btnMap.addEventListener('click', function(evt){
 			if (!googleMapVisible) {
+				btnMap.text = 'List';
 				tvDolList.animate({opacity: 0, duration:300});
 				googleMap.animate({opacity: 1, duration:300});
 				googleMapVisible = true;
@@ -160,29 +160,14 @@ function WinSearch() {
 				} else {
 					btnRedoSearch.visible = true;
 				}
-			}
-				
-		});
-		
-		var btnList = Titanium.UI.createLabel({
-			text: 'List',
-			color: 'white',
-			height: 34,
-			width: 54,
-			textAlign: 'center',
-			font:{fontSize:'14dp', fontWeight:'bold'},
-			backgroundImage: '/images/toolbar_button_54x34.png',
-			backgroundSelectedImage: '/images/toolbar_button_54x34_pressed.png',
-			center: Titanium.Platform.displayCaps.platformWidth/2 + 30
-		});
-		btnList.addEventListener('click', function(evt){
-			if (googleMapVisible) {
+			} else {
+				btnMap.text = 'Map';
 				tvDolList.animate({opacity: 1, duration:300});
 				googleMap.animate({opacity: 0, duration:300});
 				btnRedoSearch.visible = false;
 				googleMapVisible = false;
 			}
-			
+				
 		});
 		
 		var btnFilter = Titanium.UI.createLabel({
@@ -192,7 +177,7 @@ function WinSearch() {
 			height: 34,
 			width: 54,
 			textAlign: 'center',
-			font:{fontSize:'14dp', fontWeight:'bold'},
+			font:app.Font.button1,
 			backgroundImage: '/images/toolbar_button_54x34.png',
 			backgroundSelectedImage: '/images/toolbar_button_54x34_pressed.png',
 		});
@@ -211,7 +196,6 @@ function WinSearch() {
 
 		vwBottom.add(btnNav);
 		vwBottom.add(btnMap);
-		vwBottom.add(btnList);
 		vwBottom.add(btnFilter);
 		
 		self.add(vwBottom);
@@ -295,7 +279,7 @@ function WinSearch() {
 		}
 		
 		var section = Titanium.UI.createTableViewSection({
-			font:{fontSize:'12dp', fontWeight:'bold'}
+			font:app.Font.h5
 		});
 		
 		var vwYelpHeader = Ti.UI.createView({
@@ -327,7 +311,7 @@ function WinSearch() {
 		    width: 'auto',
 		    height:'auto',
 		    text: industry,
-		    font:{fontSize:'16dp', fontWeight:'bold'},
+		    font:app.Font.h2,
 		    color:'white'
 		});
 		vwYelpHeader.add(lblYelpHeader);
@@ -349,7 +333,7 @@ function WinSearch() {
 		    width: 'auto',
 		    height:'auto',
 		    text: 'yelp.com',
-		    font:{fontSize:'12dp', fontStyle:'italic'},
+		    font: app.Font.h6,
 		    color:'#999999'
 		});
 		vwYelpHeader.add(lblYelpSource);
@@ -421,7 +405,7 @@ function WinSearch() {
 					width: Titanium.Platform.displayCaps.platformWidth - 75,
 					textAlign: 'left',
 					touchEnabled: false,
-					font:{fontSize:'14dp', fontWeight:'bold'}
+					font:app.Font.button1
 					
 				
 				});
@@ -464,7 +448,7 @@ function WinSearch() {
 					width: Titanium.Platform.displayCaps.platformWidth - 100,
 					textAlign: 'left',
 				    //font:{fontSize: Ti.Platform.osname == 'android' ? 14 : 10}
-				    font:{fontSize: '12dp'}
+				    font: app.Font.p2
 				    
 				});
 				rowDOL.add(lblBizAddress);
@@ -792,7 +776,7 @@ function WinSearch() {
 		}
 		
 		var section = Titanium.UI.createTableViewSection({
-			font:{fontSize:'12dp', fontWeight:'bold'},
+			font:app.Font.h5,
 			backgroundColor: 'black'
 		});
 		
@@ -821,13 +805,11 @@ function WinSearch() {
 		vwHeader.add(imgIndustryIcon);
 		
 		var lblHeader = Ti.UI.createLabel({
-			//borderColor: 'white',
-		    //top:5, bottom:5, 
 		    left: imgIndustryIcon.left + imgIndustryIcon.width + 10,
 		    width: 'auto',
 		    height:'auto',
 		    text: evt.industry,
-		    font:{fontSize:'16dp', fontWeight:'bold'},
+		    font:app.Font.h2,
 		    color:'white'
 		});
 		vwHeader.add(lblHeader);
@@ -861,15 +843,12 @@ function WinSearch() {
 		}
 		vwHeader.add(imgDOLLogo);
 		
-		var lblSource = Ti.UI.createLabel({
-			//borderColor: 'white',
-		    //top:5, bottom:5, 
+		var lblSource = Ti.UI.createLabel({ 
 		    right:imgDOLLogo.width + 10, 
 		    width: 'auto',
 		    height:'auto',
-		    //text: '(Dept of Labor/' + evt.source + ')',
 		    text: 'Dept of Labor',
-		    font:{fontSize:'12dp', fontStyle:'italic'},
+		    font:app.Font.h6,
 		    color:'#999999'
 		});
 		vwHeader.add(lblSource);
@@ -995,7 +974,7 @@ function WinSearch() {
 				width: Titanium.Platform.displayCaps.platformWidth - 75,
 				textAlign: 'left',
 				touchEnabled: false,
-				font:{fontSize:'14dp', fontWeight:'bold'}
+				font:app.Font.button1
 			});
 			rowDOL.add(lblBizName);
 			
@@ -1034,19 +1013,14 @@ function WinSearch() {
 			var lblBizAddress = Ti.UI.createLabel({
 				text: address,
 				color: 'gray',
-				//borderColor: 'black',
-				//top: Ti.Platform.osname == 'android' ? 22 : 25,
 				top: 23,
-				//height: Ti.Platform.osname == 'android' ? 20 : 10,
 				height: 15,
 				left: 10,
 				touchEnabled: false,
-				//bottom: Ti.Platform.osname == 'android' ? 2 : 5,
 				bottom: 5,
 				width: Titanium.Platform.displayCaps.platformWidth - 100,
 				textAlign: 'left',
-			    //font:{fontSize: Ti.Platform.osname == 'android' ? 14 : 10}
-			    font:{fontSize: '12dp'}
+			    font:app.Font.p2
 			});
 			rowDOL.add(lblBizAddress);
 			

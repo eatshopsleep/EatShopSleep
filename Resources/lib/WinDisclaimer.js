@@ -45,7 +45,7 @@ function WinDisclaimer() {
 		left: 10,
 		width: 'auto',
 		textAlign: 'left',
-	    font:{fontSize: '16dp', fontWeight:'bold'}
+	    font:app.Font.h2
 	});
 	
 	var row1 = Titanium.UI.createTableViewRow({
@@ -58,13 +58,6 @@ function WinDisclaimer() {
 	row1.add(lbl1);
 	tvDisclaimer.appendRow(row1);
 	
-	var winWidth;
-	if (Ti.Platform.osname == 'ipad') {
-		winWidth = 540;
-	} else {
-		winWidth = Titanium.Platform.displayCaps.platformWidth;
-	}
-	
 	var lbl2 = Ti.UI.createLabel({
 		text: 'THE MATERIAL EMBODIED IN THIS SOFTWARE IS PROVIDED TO YOU "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, EXPRESS, IMPLIED, OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL THE UNITED STATES DEPARTMENT OF LABOR (DOL) OR THE UNITED STATES GOVERNMENT BE LIABLE TO YOU OR ANYONE ELSE FOR ANY DIRECT, SPECIAL, INCIDENTAL, INDIRECT, OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES WHATSOEVER, INCLUDING WITHOUT LIMITATION, LOSS OF PROFIT, LOSS OF USE, SAVINGS OR REVENUE, OR THE CLAIMS OF THIRD PARTIES, WHETHER OR NOT DOL OR THE U.S. GOVERNMENT HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH LOSS, HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE POSSESSION, USE, OR PERFORMANCE OF THIS SOFTWARE.',
 		color: 'black',
@@ -72,9 +65,9 @@ function WinDisclaimer() {
 		bottom: 5,
 		height: 'auto',
 		left: 10,
-		width: winWidth - 20,
+		right: 10,
 		textAlign: 'left',
-	    font:{fontSize: '12dp', fontWeight:'normal'}
+	    font:app.Font.p2
 	});
 	
 	var row2 = Titanium.UI.createTableViewRow({
@@ -95,7 +88,7 @@ function WinDisclaimer() {
 			height: 38,
 			width: 200,
 			textAlign: 'center',
-			font:{fontSize:'16dp', fontWeight:'bold'},
+			font:app.Font.button2,
 			backgroundImage: '/images/blue_button_200x38.png',
 			backgroundSelectedImage: '/images/blue_button_200x38_pressed.png',
 		});

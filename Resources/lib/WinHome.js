@@ -15,19 +15,16 @@ function WinHome() {
 			image: '/images/food_yellow.png',
 			width: 32,
 			height: 32,
-			//left: 0
 		});
 		var imgShop = Titanium.UI.createImageView({
 			image: '/images/retail_blue.png',
 			width: 32,
 			height: 32,
-			//left: 0
 		});
 		var imgSleep = Titanium.UI.createImageView({
 			image: '/images/hospitality_purple.png',
 			width: 32,
 			height: 32,
-			//left: 0
 		});
 		var lblEat = Titanium.UI.createLabel({
 			text: 'eat',
@@ -35,7 +32,7 @@ function WinHome() {
 			height: 'auto',
 			width: Ti.Platform.osname == 'android' ? 60 : 'auto',
 			textAlign: 'center',
-			font:{fontSize: '18dp', fontWeight:'bold'}
+			font:app.Font.h1
 		});
 		var lblShop = Titanium.UI.createLabel({
 			text: 'shop',
@@ -43,7 +40,7 @@ function WinHome() {
 			height: 'auto',
 			width: Ti.Platform.osname == 'android' ? 60 : 'auto',
 			textAlign: 'center',
-			font:{fontSize: '18dp', fontWeight:'bold'}
+			font:app.Font.h1
 		});
 		var lblSleep = Titanium.UI.createLabel({
 			text: 'sleep',
@@ -51,7 +48,7 @@ function WinHome() {
 			height: 'auto',
 			width: Ti.Platform.osname == 'android' ? 60 : 'auto',
 			textAlign: 'center',
-			font:{fontSize: '18dp', fontWeight:'bold'}
+			font:app.Font.h1
 		});
 		var flexSpace = Titanium.UI.createButton({
 			systemButton: Ti.UI.iPhone.SystemButton.FLEXIBLE_SPACE
@@ -69,17 +66,20 @@ function WinHome() {
 		
 	}
 	
-	var subtitle = Ti.UI.createLabel({
-		top: 44,
-		left: 0,
+	var lbl = Ti.UI.createLabel({
+		top: 0,
 		height: 30,
-		width: Titanium.Platform.displayCaps.platformWidth,
 		text: 'A good business is a fair and safe one',
 		color: 'white',
-		font:{fontSize: '16dp', fontWeight:'normal'},
+		font:app.Font.h3,
 		textAlign: 'center',
+	});
+	var subtitle = Ti.UI.createView({
+		top: 44,
+		height: 30,
 		backgroundColor: 'black',
 	});
+	subtitle.add(lbl);
 	self.add(subtitle);
 	
 	var imgAgencies = Titanium.UI.createImageView({
@@ -101,28 +101,33 @@ function WinHome() {
 				
 			switch (evt.index) {
 	    		case 0:
-	    			var WinSearch = require('/lib/WinSearch');
-					app.winSearch = new WinSearch(); 
-					WinSearch = null;
-					
-	    			if (Ti.Platform.osname == 'android') {
-	    				app.winSearch.ui.open();
-	    			} else {
-	    				
-						app.tabSearch1 = Titanium.UI.createTab({  
-						    window:app.winSearch.ui
-						});	
-						app.tgSearch = Titanium.UI.createTabGroup({
-							activeTab: app.tabSearch1,
-							opacity: 0
-						});
-						app.tgSearch.addTab(app.tabSearch1);
+	    			if(!Ti.Network.online) {
+						alert('Network unavailable. Check your network settings.');
+					} else {
+						var WinSearch = require('/lib/WinSearch');
+						app.winSearch = new WinSearch(); 
+						WinSearch = null;
 						
-						app.tgSearch.open();
-						
-						self.animate({opacity:0,duration:300});
-						app.tgSearch.animate({opacity:1,duration:300});
-	    			}
+		    			if (Ti.Platform.osname == 'android') {
+		    				app.winSearch.ui.open();
+		    			} else {
+		    				
+							app.tabSearch1 = Titanium.UI.createTab({  
+							    window:app.winSearch.ui
+							});	
+							app.tgSearch = Titanium.UI.createTabGroup({
+								activeTab: app.tabSearch1,
+								opacity: 0
+							});
+							app.tgSearch.addTab(app.tabSearch1);
+							
+							app.tgSearch.open();
+							
+							self.animate({opacity:0,duration:300});
+							app.tgSearch.animate({opacity:1,duration:300});
+		    			}
+					}
+	    			
 	    			
 	    			break;
 	    		case 1:
@@ -199,14 +204,12 @@ function WinHome() {
 			top: 10,
 			bottom: 10,
 			width: 125,
-			//font:{fontSize: Ti.Platform.osname == 'android' ? 20 : 18, fontWeight:'normal'},
 			font:{fontSize: '18dp', fontWeight:'normal'},
 			touchEnabled: false,
 		});
 		var rowMenu = Titanium.UI.createTableViewRow({
 			hasChild: false,
 			height: 'auto',
-			//selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
 			selectedBackgroundColor: app.ROW_SELECTION_COLOR,
 			classname: 'menu'
 		});
@@ -225,19 +228,16 @@ function WinHome() {
 			image: '/images/food_yellow.png',
 			width: 32,
 			height: 32,
-			//left: 0
 		});
 		var imgShop = Titanium.UI.createImageView({
 			image: '/images/retail_blue.png',
 			width: 32,
 			height: 32,
-			//left: 0
 		});
 		var imgSleep = Titanium.UI.createImageView({
 			image: '/images/hospitality_purple.png',
 			width: 32,
 			height: 32,
-			//left: 0
 		});
 		var lblEat = Titanium.UI.createLabel({
 			text: 'eat',
@@ -245,7 +245,7 @@ function WinHome() {
 			height: 'auto',
 			width: Ti.Platform.osname == 'android' ? 60 : 'auto',
 			textAlign: 'center',
-			font:{fontSize: '18dp', fontWeight:'bold'}
+			font:app.Font.h1
 		});
 		var lblShop = Titanium.UI.createLabel({
 			text: 'shop',
@@ -253,7 +253,7 @@ function WinHome() {
 			height: 'auto',
 			width: Ti.Platform.osname == 'android' ? 60 : 'auto',
 			textAlign: 'center',
-			font:{fontSize: '18dp', fontWeight:'bold'}
+			font:app.Font.h1
 		});
 		var lblSleep = Titanium.UI.createLabel({
 			text: 'sleep',
@@ -261,7 +261,7 @@ function WinHome() {
 			height: 'auto',
 			width: Ti.Platform.osname == 'android' ? 60 : 'auto',
 			textAlign: 'center',
-			font:{fontSize: '18dp', fontWeight:'bold'}
+			font:app.Font.h1
 		});
 		
     	var width = imgEat.width + lblEat.width + imgShop.width + lblShop.width + imgSleep.width + lblSleep.width;
@@ -270,7 +270,6 @@ function WinHome() {
 			height: 44,
 			layout: 'horizontal',
 			width: width,
-			center: Titanium.Platform.displayCaps.platformWidth/2,
 		});
 		vwContainer.add(imgEat);
 		vwContainer.add(lblEat);

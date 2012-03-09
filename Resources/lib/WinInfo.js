@@ -81,7 +81,7 @@ function WinInfo() {
 			//width: 'auto',
 			textAlign: 'left',
 		    //font:{fontSize: Ti.Platform.osname == 'android' ? 18 : 16, fontWeight:'bold'}
-		    font:{fontSize: '16dp', fontWeight:'bold'}
+		    font:app.Font.h2
 		});
 		row.add(lbl1);
 		
@@ -106,10 +106,8 @@ function WinInfo() {
 			height: 'auto',
 			left: 10,
 			width: Titanium.Platform.displayCaps.platformWidth - 20,
-			//width: 'auto',
 			textAlign: 'left',
-		    //font:{fontSize: Ti.Platform.osname == 'android' ? 16 : 14, fontWeight:'normal'}
-		    font:{fontSize: '14dp', fontWeight:'normal'}
+		    font:app.Font.p1
 		});
 		row.add(lbl1);
 

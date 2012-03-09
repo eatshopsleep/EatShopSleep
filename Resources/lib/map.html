@@ -524,7 +524,7 @@
 					map.setCenter(latLng);
 					setLocalZoom();
 					
-					Ti.App.fireEvent('geocodeSuccess');
+					Ti.App.fireEvent('geocodeSuccess', {latitude: latLng.lat(), longitude: latLng.lng()});
 				} else if (status == google.maps.GeocoderStatus.ZERO_RESULTS) {
 					alert('Location not found.');
 				} else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {

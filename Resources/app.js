@@ -93,11 +93,15 @@ Ti.App.addEventListener('getDOLList',function(evt) {
 
 Ti.App.addEventListener('geocodeSuccess', function(evt){
 	
+	app.CurrentLocation.latitude = evt.latitude;
+	app.CurrentLocation.longitude = evt.longitude;
+	
 	if (app.winLocation) {
 		app.winLocation.ui.close();
 		app.winLocation = null;	
 	}
 	if (app.winSearch) {
+		
 		app.winSearch.update(app.FilterSettings.SearchName);
 	}	
 	

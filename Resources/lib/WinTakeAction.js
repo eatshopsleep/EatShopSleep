@@ -139,7 +139,7 @@ function WinTakeAction(inTabGroup) {
 			height: 34,
 			width: 74,
 			textAlign: 'center',
-			font:{fontSize:'14dp', fontWeight:'bold'},
+			font:app.Font.button1,
 			backgroundImage: '/images/toolbar_button_74x34.png',
 			backgroundSelectedImage: '/images/toolbar_button_74x34_pressed.png',
 			center: Titanium.Platform.displayCaps.platformWidth/2 - 50
@@ -156,7 +156,7 @@ function WinTakeAction(inTabGroup) {
 			height: 34,
 			width: 74,
 			textAlign: 'center',
-			font:{fontSize:'14dp', fontWeight:'bold'},
+			font:app.Font.button1,
 			backgroundImage: '/images/toolbar_button_74x34.png',
 			backgroundSelectedImage: '/images/toolbar_button_74x34_pressed.png',
 			center: Titanium.Platform.displayCaps.platformWidth/2 + 50

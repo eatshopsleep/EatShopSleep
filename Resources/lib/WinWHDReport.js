@@ -44,18 +44,18 @@ function WinWHDReport(whd_data) {
 	});
 	self.add(tvReport);
 	
-	tvReport.appendRow(createRowHeader('Dept of Labor: Wage & Hour Division (WHD) Findings','black', '16dp'));
+	tvReport.appendRow(createRowHeader('Dept of Labor: Wage & Hour Division (WHD) Findings','black'));
 	tvReport.appendRow(createRow('Name: ', whd_data.biz_name));
 	tvReport.appendRow(createRow('Address: ', whd_data.address + ', ' + whd_data.city + ', ' + whd_data.state + ' ' + whd_data.zip));
 	tvReport.appendRow(createRow('NAICS Code Description: ', whd_data.naics_code_description));
 	tvReport.appendRow(createRow('Period of Findings: ', whd_data.findings_start_date + ' - ' + whd_data.findings_end_date));
 	
-	tvReport.appendRow(createRowHeader('Fair Labor Standards Act, Child Labor',app.HEADER_COLOR, '16dp'));
+	tvReport.appendRow(createRowHeader('Fair Labor Standards Act, Child Labor',app.HEADER_COLOR));
 	tvReport.appendRow(createRow('Violations: ', whd_data.flsa_cl_violtn_cnt));
 	tvReport.appendRow(createRow('Minors Employed in Violation: ', whd_data.flsa_cl_minor_cnt));
 	tvReport.appendRow(createRow('Civil Money Penalties: $', whd_data.flsa_cl_cmp_assd_amt));
 	
-	tvReport.appendRow(createRowHeader('Fair Labor Standards Act',app.HEADER_COLOR, '16dp'));
+	tvReport.appendRow(createRowHeader('Fair Labor Standards Act',app.HEADER_COLOR));
 	tvReport.appendRow(createRow('Violations: ', whd_data.flsa_violtn_cnt));
 	tvReport.appendRow(createRow('Employees Owed Back Wages: ', whd_data.flsa_ee_atp_cnt));
 	
@@ -81,7 +81,7 @@ function WinWHDReport(whd_data) {
 		
 	}
 	
-	function createRowHeader(label, color, font_size) {
+	function createRowHeader(label, color) {
         var row = Ti.UI.createTableViewRow({
 			hasChild:false,
 			height: 'auto',
@@ -102,7 +102,7 @@ function WinWHDReport(whd_data) {
 			width: Titanium.Platform.displayCaps.platformWidth - 20,
 			//width: 'auto',
 			textAlign: 'left',
-		    font:{fontSize: font_size, fontWeight:'bold'}
+		    font:app.Font.h2
 		});
 		row.add(lbl1);
 		
@@ -129,7 +129,7 @@ function WinWHDReport(whd_data) {
 			width: Titanium.Platform.displayCaps.platformWidth - 20,
 			//width: 'auto',
 			textAlign: 'left',
-		    font:{fontSize: '14dp', fontWeight:'normal'}
+		    font:app.Font.p1
 		});
 		row.add(lbl1);
 		

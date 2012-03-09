@@ -52,7 +52,6 @@ function WinFilter() {
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
 		barColor: app.HEADER_COLOR,
 		title: 'Filter',
-		//leftNavButton: Ti.UI.createLabel({color:'white',font:{fontSize:'18dp', fontWeight:'bold'},text: ' Filter'}),
 		rightNavButton: btnClose,
 		modal: true
 	});
@@ -89,7 +88,7 @@ function WinFilter() {
 			height: 44,
 			left: 10,
 			textAlign: 'left',
-		    font:{fontSize:'18dp', fontWeight:'bold'}
+		    font:app.Font.h1
 		});
 		vwTop.add(lblHeader);
 		
@@ -100,7 +99,7 @@ function WinFilter() {
 			height: 34,
 			width: 54,
 			textAlign: 'center',
-			font:{fontSize:'14dp', fontWeight:'bold'},
+			font:app.Font.button1,
 			backgroundImage: '/images/toolbar_button_54x34.png',
 			backgroundSelectedImage: '/images/toolbar_button_54x34_pressed.png',
 		});
@@ -221,7 +220,7 @@ function WinFilter() {
 		//left: 130,
 		left: 10,
 		//enabled: ((app.FilterSettings.SearchName == null && Ti.Platform.osname == 'android') ? false : true),
-		font:{fontSize: '16dp'},
+		font:app.Font.input1,
 		hintText: 'enter name',
 		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
 		//visible: ((app.FilterSettings.SearchName == null && Ti.Platform.osname != 'android') ? false : true),
@@ -529,7 +528,7 @@ function WinFilter() {
 					text:iconImages[i].text, 
 					color: 'black',
 					textAlign: 'center',
-					font:{fontSize:'16dp'}
+					font:app.Font.h3
 				});
 				viewSource.add(lbl);
 			}
@@ -569,7 +568,7 @@ function WinFilter() {
 			left: 10,
 			//width: winWidth - 20,
 			textAlign: 'left',
-		    font:{fontSize: '16dp', fontWeight:'bold'}
+		    font:app.Font.h2
 		});
 		rowHeader.add(lblHeader);
 		
