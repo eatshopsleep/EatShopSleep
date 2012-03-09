@@ -44,6 +44,24 @@ function WinLocation() {
 		});
 		vwTop.add(lblHeader);
 		
+		var btnGo = Titanium.UI.createLabel({
+			text: 'Close',
+			color: 'white',
+			right: 10,
+			height: 34,
+			width: 54,
+			textAlign: 'center',
+			font:{fontSize:'14dp', fontWeight:'bold'},
+			backgroundImage: '/images/toolbar_button_54x34.png',
+			backgroundSelectedImage: '/images/toolbar_button_54x34_pressed.png',
+		});
+		btnGo.addEventListener('click', function(evt){
+			self.close();
+		
+			app.winLocation = null;
+		});
+		vwTop.add(btnGo);
+		
 		self.add(vwTop);	
 	}
 	
@@ -58,7 +76,7 @@ function WinLocation() {
 		title:'Use Current Location',
 		backgroundImage: '/images/blue_button_200x38.png',
 		backgroundSelectedImage: '/images/blue_button_200x38_pressed.png',
-		top: 0,
+		top: 140,
 		width:200,
 		height:38,
 		color: 'white',
@@ -80,7 +98,7 @@ function WinLocation() {
 					}
 			        Ti.API.error('Geolocation error:' + evt.error);
 				} else {
-	
+					self.close();
 					app.CurrentLocation.latitude = evt.coords.latitude;
 					app.CurrentLocation.longitude = evt.coords.longitude;
 					Ti.App.fireEvent('setMapCenter',{lat: app.CurrentLocation.latitude, lon: app.CurrentLocation.longitude});
@@ -88,7 +106,7 @@ function WinLocation() {
 					app.winSearch.setLocalZoom();
 					app.winSearch.update(app.FilterSettings.SearchName);	
 					
-					self.close();
+					
 					app.winLocation = null;
 				}
 			});
@@ -97,8 +115,8 @@ function WinLocation() {
 	vwLocation.add(btnCurrentLocation);
 	
 	var lblChooseLocation = Ti.UI.createLabel({
-		text:'Or Enter a Location:',
-		top: 50,
+		text:'Enter a Location:',
+		top: 0,
 		height:38,
 		textAlign:'center',
 		color: 'white',
@@ -119,9 +137,9 @@ function WinLocation() {
 		leftButton: btnMagnify,
 		leftButtonMode: Titanium.UI.INPUT_BUTTONMODE_ALWAYS,
 		height: Ti.Platform.osname == 'android' ? 40 : 32,
-		width: 200,
-		top: 90,
-		font:{fontSize: '14dp'},
+		width: 250,
+		top: 38,
+		font:{fontSize: '16dp'},
 		returnKeyType: Titanium.UI.RETURNKEY_DONE,
 		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
 		hintText: 'address, city, state, or zip',
@@ -133,7 +151,7 @@ function WinLocation() {
 		title:'Search',
 		backgroundImage: '/images/blue_button_200x38.png',
 		backgroundSelectedImage: '/images/blue_button_200x38_pressed.png',
-		top: 140,
+		top: 83,
 		width:200,
 		height:38,
 		color: 'white',

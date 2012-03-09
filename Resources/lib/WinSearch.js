@@ -49,18 +49,20 @@ function WinSearch() {
 		
 	});
 	tvDolList.addEventListener('click', function(evt) {
-		
-		var WinBizDetail = require('/lib/WinBizDetail');
-		app.winBizDetail = new WinBizDetail(evt.row.data);
-		WinBizDetail = null;
-		
-		if (Ti.Platform.osname == 'android') {
-			app.winBizDetail.ui.open();
-		} else {
-			app.tabSearch1.open(app.winBizDetail.ui);	
+		if (typeof evt.row.data != 'undefined') {
+			var WinBizDetail = require('/lib/WinBizDetail');
+			app.winBizDetail = new WinBizDetail(evt.row.data);
+			WinBizDetail = null;
+			
+			if (Ti.Platform.osname == 'android') {
+				app.winBizDetail.ui.open();
+			} else {
+				app.tabSearch1.open(app.winBizDetail.ui);	
+			}
+			
+			self.barColor = app.HEADER_COLOR;
 		}
 		
-		self.barColor = app.HEADER_COLOR;
 	});
 	self.add(tvDolList);
 	
@@ -133,7 +135,7 @@ function WinSearch() {
 		btnNav.addEventListener('click', function(evt){
 			var WinLocation = require('/lib/WinLocation');
 			app.winLocation = new WinLocation();
-			app.winLocation.ui.open();	
+			app.winLocation.ui.open();
 			WinLocation = null;
 		});
 		
@@ -149,14 +151,17 @@ function WinSearch() {
 			center: Titanium.Platform.displayCaps.platformWidth/2 - 30
 		});
 		btnMap.addEventListener('click', function(evt){
-			tvDolList.animate({opacity: 0, duration:300});
-			googleMap.animate({opacity: 1, duration:300});
-			googleMapVisible = true;
-			if (hideRedoButton) {
-				btnRedoSearch.visible = false;
-			} else {
-				btnRedoSearch.visible = true;
-			}	
+			if (!googleMapVisible) {
+				tvDolList.animate({opacity: 0, duration:300});
+				googleMap.animate({opacity: 1, duration:300});
+				googleMapVisible = true;
+				if (hideRedoButton) {
+					btnRedoSearch.visible = false;
+				} else {
+					btnRedoSearch.visible = true;
+				}
+			}
+				
 		});
 		
 		var btnList = Titanium.UI.createLabel({
@@ -171,10 +176,13 @@ function WinSearch() {
 			center: Titanium.Platform.displayCaps.platformWidth/2 + 30
 		});
 		btnList.addEventListener('click', function(evt){
-			tvDolList.animate({opacity: 1, duration:300});
-			googleMap.animate({opacity: 0, duration:300});
-			btnRedoSearch.visible = false;
-			googleMapVisible = false;
+			if (googleMapVisible) {
+				tvDolList.animate({opacity: 1, duration:300});
+				googleMap.animate({opacity: 0, duration:300});
+				btnRedoSearch.visible = false;
+				googleMapVisible = false;
+			}
+			
 		});
 		
 		var btnFilter = Titanium.UI.createLabel({
@@ -219,8 +227,8 @@ function WinSearch() {
 		});
 		btnNav.addEventListener('click', function(evt){
 			var WinLocation = require('/lib/WinLocation');
-			app.winLocation = new WinLocation({modalTransitionStyle:Ti.UI.iPhone.MODAL_TRANSITION_STYLE_COVER_VERTICAL,modalStyle:Ti.UI.iPhone.MODAL_PRESENTATION_FORMSHEET});
-			app.winLocation.ui.open();	
+			app.winLocation = new WinLocation();
+			app.winLocation.ui.open({modalTransitionStyle:Ti.UI.iPhone.MODAL_TRANSITION_STYLE_COVER_VERTICAL,modalStyle:Ti.UI.iPhone.MODAL_PRESENTATION_FORMSHEET});	
 			WinLocation = null;
 			
 		});
@@ -278,7 +286,7 @@ function WinSearch() {
 	this.ui = self;
 	
 	function getYelpList(evt, industry) {
-	
+		
 		if (evt.businesses.length > 0) {
 			tvDolList.separatorStyle = Titanium.UI.iPhone.TableViewSeparatorStyle;
 			
@@ -353,7 +361,7 @@ function WinSearch() {
 				hasChild:false,
 				height: 30,
 				backgroundColor: 'black',
-				touchEnabled: false
+				selectedBackgroundColor: 'black'
 			});
 			rowHeader.add(vwYelpHeader);
 			section.add(rowHeader);
@@ -468,12 +476,36 @@ function WinSearch() {
 			
 		}
 		
-		if (section.rowCount > 0) {
+		var results = false;
+		if (Ti.Platform.osname == 'android') {
+			if (section.rowCount > 1) {
+				results = true;
+			}
+		} else {
+			if (section.rowCount > 0) {
+				results = true;
+			}
+		}
+		if (results == true) {
+			var newData = tvDolList.data;	
+			
+			newData.push(section);
+			tvDolList.setData(newData);	
+		} else {
+			var rowResults = Ti.UI.createTableViewRow({
+				hasChild: false,
+				title: 'No Results',
+				color: 'black',
+				selectedBackgroundColor: 'white',
+				selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+			});
+			section.add(rowResults);
+			
 			var newData = tvDolList.data;	
 			newData.push(section);
-			tvDolList.setData(newData);
+			tvDolList.setData(newData);	
 		}
-		//app.vwIndicator.hide(self);
+		
 	}
 	
 	function zoomChanged(evt) {
@@ -588,8 +620,9 @@ function WinSearch() {
 						if (jsonResponse.businesses.length > 0) {
 							// WANT PASS ON PARSED VALUES HERE BUT ANDROID WONT SEE THEM: TIMOB-5499
 					    	Ti.App.fireEvent('setYelpFoodMarkers', {response:response, searchName:app.FilterSettings.SearchName});
-					    	getYelpList(jsonResponse, 'Food');
+					    	
 					    }
+					    getYelpList(jsonResponse, 'Food');
 					    /*
 						if (response.businesses.length > 0) {
 	
@@ -614,8 +647,9 @@ function WinSearch() {
 						if (jsonResponse.businesses.length > 0) {
 	
 					    	Ti.App.fireEvent('setYelpRetailMarkers', {response:response, searchName:app.FilterSettings.SearchName});
-					    	getYelpList(jsonResponse, 'Retail');
+					    	
 					    }
+					    getYelpList(jsonResponse, 'Retail');
 					    /*
 					    if (response.businesses.length > 0) {
 					    	Ti.App.fireEvent('setYelpRetailMarkers', {response:response, searchName:app.FilterSettings.SearchName});
@@ -640,8 +674,9 @@ function WinSearch() {
 						if (jsonResponse.businesses.length > 0) {
 	
 					    	Ti.App.fireEvent('setYelpHospitalityMarkers', {response:response, searchName:app.FilterSettings.SearchName});
-					    	getYelpList(jsonResponse, 'Hospitality');
+					    	
 					    }
+					    getYelpList(jsonResponse, 'Hospitality');
 					    /*   
 					    if (response.businesses.length > 0) {
 					    	Ti.App.fireEvent('setYelpHospitalityMarkers', {response:response, searchName:app.FilterSettings.SearchName});
@@ -668,8 +703,9 @@ function WinSearch() {
 						if (jsonResponse.businesses.length > 0) {
 	
 					    	Ti.App.fireEvent('setYelpFoodMarkers', {response:response, searchName:app.FilterSettings.SearchName});
-					    	getYelpList(jsonResponse, 'Food');
+					    	
 					    }
+					    getYelpList(jsonResponse, 'Food');
 					    /*
 					    if (response.businesses.length > 0) {
 					    	Ti.App.fireEvent('setYelpFoodMarkers', {response:response, searchName:app.FilterSettings.SearchName});
@@ -683,8 +719,9 @@ function WinSearch() {
 								if (jsonResponse.businesses.length > 0) {
 			
 							    	Ti.App.fireEvent('setYelpRetailMarkers', {response:response, searchName:app.FilterSettings.SearchName});
-							    	getYelpList(jsonResponse, 'Retail');
+							    	
 							    }
+							    getYelpList(jsonResponse, 'Retail');
 								/* 
 							    if (response.businesses.length > 0) {
 							    	Ti.App.fireEvent('setYelpRetailMarkers', {response:response, searchName:app.FilterSettings.SearchName});
@@ -698,8 +735,9 @@ function WinSearch() {
 										if (jsonResponse.businesses.length > 0) {
 					
 									    	Ti.App.fireEvent('setYelpHospitalityMarkers', {response:response, searchName:app.FilterSettings.SearchName});
-									    	getYelpList(jsonResponse, 'Hospitality');
+									    	
 									    }
+									    getYelpList(jsonResponse, 'Hospitality');
 									    /*   
 										if (response.businesses.length > 0) {
 									    	Ti.App.fireEvent('setYelpHospitalityMarkers', {response:response, searchName:app.FilterSettings.SearchName});
@@ -844,7 +882,7 @@ function WinSearch() {
 				hasChild:false,
 				height: 30,
 				backgroundColor: 'black',
-				touchEnabled: false
+				selectedBackgroundColor: 'black'
 			});
 			rowHeader.add(vwHeader);
 			section.add(rowHeader);
@@ -1017,14 +1055,37 @@ function WinSearch() {
 			section.add(rowDOL);
 			
 		}
-	
-		if (section.rowCount > 0) {
+		
+		var results = false;
+		if (Ti.Platform.osname == 'android') {
+			if (section.rowCount > 1) {
+				results = true;
+			}
+		} else {
+			if (section.rowCount > 0) {
+				results = true;
+			}
+		}
+		if (results == true) {
 			var newData = tvDolList.data;	
 			
 			newData.push(section);
 			tvDolList.setData(newData);	
+		} else {
+			var rowResults = Ti.UI.createTableViewRow({
+				hasChild: false,
+				title: 'No Results',
+				color: 'black',
+				selectedBackgroundColor: 'white',
+				selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+			});
+			section.add(rowResults);
+			
+			var newData = tvDolList.data;	
+			newData.push(section);
+			tvDolList.setData(newData);	
 		}
-		//app.vwIndicator.hide(self);
+		
 	}
 	this.getDOLList = getDOLList;
 	

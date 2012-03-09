@@ -39,7 +39,7 @@ function WinOSHAReport(activity_nr) {
 		orientationModes: app.ORIENTATION_MODES,
 		tabBarHidden: true,
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
-		left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
+		//left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
 		titleControl: Ti.Platform.osname == 'android' ? null : vwButtons,
 		backgroundColor: 'white',
 		barColor: app.HEADER_COLOR

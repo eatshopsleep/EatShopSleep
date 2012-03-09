@@ -17,7 +17,7 @@ function WinWHDReport(whd_data) {
 		backgroundColor: 'white',
 		tabBarHidden: true,
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
-		left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
+		//left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
 		titleControl: null,
 		rightNavButton: vwLogo,
 		barColor: app.HEADER_COLOR

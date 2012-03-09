@@ -2,6 +2,7 @@ Ti.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 Ti.Geolocation.purpose = 'Acquiring Current Location';
 Ti.Geolocation.distanceFilter = 10;
 Ti.UI.setBackgroundColor('white');
+Ti.UI.orientation = Ti.UI.PORTRAIT;
 
 var app = require('/lib/globals');
 
@@ -26,13 +27,7 @@ if(!Ti.Network.online) {
 Titanium.Network.addEventListener('change', function(evt) {
 	if (!evt.online) {
 		alert('Network unavailable. Check your network settings.');
-	} else {
-		if (app.winSearch) {
-			//app.winSearch.reload();
-			
-		}
-		
-	}
+	} 
 
 });
 
@@ -97,15 +92,14 @@ Ti.App.addEventListener('getDOLList',function(evt) {
 });
 
 Ti.App.addEventListener('geocodeSuccess', function(evt){
-	if (app.winSearch) {
-		app.winSearch.update(app.FilterSettings.SearchName);
-	}
+	
 	if (app.winLocation) {
 		app.winLocation.ui.close();
-		app.winLocation.ui = null;
 		app.winLocation = null;	
 	}
-		
+	if (app.winSearch) {
+		app.winSearch.update(app.FilterSettings.SearchName);
+	}	
 	
 		
 });

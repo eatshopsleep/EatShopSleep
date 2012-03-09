@@ -14,7 +14,7 @@ function WinBizMap(address, city, state) {
 		backgroundColor: 'white',
 		barColor: app.HEADER_COLOR,
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
-		left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
+		//left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
 	});
 	self.addEventListener('close', function() {	
 		app.winSearch.ui.barColor = app.HEADER_COLOR;

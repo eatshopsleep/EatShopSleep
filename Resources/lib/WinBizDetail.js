@@ -6,17 +6,19 @@ function WinBizDetail(data) {
 		backgroundColor: 'white',
 		tabBarHidden: true,
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
-		left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
-		barColor: app.HEADER_COLOR
+		//left: Ti.Platform.osname == 'android' ? 0 : Titanium.Platform.displayCaps.platformWidth,
+		barColor: app.HEADER_COLOR,
 	});
 	self.addEventListener('close', function() {	
 		//winDOLMap.win.hideNavBar();
+		self = null;
 		app.winBizDetail = null;
 	});
 	self.addEventListener('android:back', function() {	
 		self.close();
 		app.winBizDetail = null;
 	});
+	
 	
 	var tableView = Titanium.UI.createTableView({
 		backgroundColor:'white',

@@ -34,15 +34,16 @@ function WinFilter() {
 	}
 	*/
 	var btnClose = Ti.UI.createButton({
-		title:'Close'
+		title:'Go'
 	});
 	btnClose.addEventListener('click', function() {
+		self.close();
+		
 		if (checkChanges() == true) {
 			app.winSearch.update(app.FilterSettings.SearchName);	
 		}
-		
-		self.close();
 		app.winFilter = null;
+		
 	});
 	
 	var self = Ti.UI.createWindow({
@@ -92,6 +93,27 @@ function WinFilter() {
 		});
 		vwTop.add(lblHeader);
 		
+		var btnGo = Titanium.UI.createLabel({
+			text: 'Go',
+			color: 'white',
+			right: 10,
+			height: 34,
+			width: 54,
+			textAlign: 'center',
+			font:{fontSize:'14dp', fontWeight:'bold'},
+			backgroundImage: '/images/toolbar_button_54x34.png',
+			backgroundSelectedImage: '/images/toolbar_button_54x34_pressed.png',
+		});
+		btnGo.addEventListener('click', function(evt){
+			if (checkChanges() == true) {
+				app.winSearch.update(app.FilterSettings.SearchName);	
+			}
+			
+			self.close();
+			app.winFilter = null;
+		});
+		vwTop.add(btnGo);
+		
 		self.add(vwTop);	
 	}
 	
@@ -115,7 +137,7 @@ function WinFilter() {
 		selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
 		backgroundSelectedColor: 'white'
 	});
-	
+	/*
 	if (Ti.Platform.osname == 'android') {
 		
 		checkBox = Titanium.UI.createSwitch({
@@ -166,7 +188,7 @@ function WinFilter() {
 		});
 		rowNameSearch.add(tbNameSearch);
 	}
-	
+	*/
 	var btnCancel = Titanium.UI.createButton({
 		title: 'Cancel',
 		style:Titanium.UI.iPhone.SystemButtonStyle.BORDERED
@@ -188,19 +210,21 @@ function WinFilter() {
 	    enabled: false
 	});
 	
-	Ti.API.info('app.FilterSettings.SearchName: ' + app.FilterSettings.SearchName);
+	
 	var textSearch = Titanium.UI.createTextField({
 		clearButtonMode: Titanium.UI.INPUT_BUTTONMODE_ALWAYS,
 		leftButton: btnSearch,
 		leftButtonMode: Titanium.UI.INPUT_BUTTONMODE_ALWAYS,
 		height: Ti.Platform.osname == 'android' ? 40 : 32,
-		width: 180,
-		left: 130,
-		enabled: ((app.FilterSettings.SearchName == null && Ti.Platform.osname == 'android') ? false : true),
-		font:{fontSize: '14dp'},
+		//width: 180,
+		right: 10,
+		//left: 130,
+		left: 10,
+		//enabled: ((app.FilterSettings.SearchName == null && Ti.Platform.osname == 'android') ? false : true),
+		font:{fontSize: '16dp'},
 		hintText: 'enter name',
 		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
-		visible: ((app.FilterSettings.SearchName == null && Ti.Platform.osname != 'android') ? false : true),
+		//visible: ((app.FilterSettings.SearchName == null && Ti.Platform.osname != 'android') ? false : true),
 		returnKeyType: Titanium.UI.RETURNKEY_DONE,
 		value: app.FilterSettings.SearchName
 	});
