@@ -53,8 +53,9 @@ function WinInfo() {
 	tvInfo.appendRow(createRow('It utilizes inspection and compliance information on the restaurant, retail, and hotel/motel industries from the Occupational Safety & Health Administration (OSHA) and Wage & Hour Divison (WHD) of the Department of Labor.'));
 	tvInfo.appendRow(createRow('It also provides business listings and customer reviews from yelp.com for these industries.'));
 	
-	tvInfo.appendRow(createRowHeader('Developer',app.HEADER_COLOR));
-	tvInfo.appendRow(createRow('R. Moore'));	
+	tvInfo.appendRow(createRowHeader('Credits',app.HEADER_COLOR));
+	tvInfo.appendRow(createRow('Copyright ©2012 Rachel Moore\n\nSoftware Development: Rachel Moore\nQuality Assurance: Genevieve Sarmiento'));
+	tvInfo.appendRow(createWebsiteRow('Visit the website'));	
 	
 	this.ui = self;
 	
@@ -62,7 +63,6 @@ function WinInfo() {
 		var row = Ti.UI.createTableViewRow({
 			hasChild:false,
 			height: Ti.Platform.osname == 'android' ? 40 : 'auto',
-			width: Titanium.Platform.displayCaps.platformWidth,
 			className: 'name',
 			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
 			backgroundColor: color,
@@ -76,7 +76,7 @@ function WinInfo() {
 			bottom: 5,
 			height: 'auto',
 			left: 10,
-			width: Titanium.Platform.displayCaps.platformWidth - 20,
+			right: 10,
 			textAlign: 'left',
 		    font:app.Font.h2
 		});
@@ -89,7 +89,6 @@ function WinInfo() {
         var row = Ti.UI.createTableViewRow({
 			hasChild:false,
 			height:'auto',
-			width: Titanium.Platform.displayCaps.platformWidth,
 			className: 'name',
 			selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
 			selectedBackgroundColor: 'white'
@@ -102,9 +101,35 @@ function WinInfo() {
 			bottom: 5,
 			height: 'auto',
 			left: 10,
-			width: Titanium.Platform.displayCaps.platformWidth - 20,
+			right: 10,
 			textAlign: 'left',
 		    font:app.Font.p1
+		});
+		row.add(lbl1);
+
+		return row;
+    }
+    function createWebsiteRow(label) {
+        var row = Ti.UI.createTableViewRow({
+			hasChild:true,
+			height:'auto',
+			selectedBackgroundColor: app.ROW_SELECTION_COLOR
+		});
+		row.addEventListener('click', function() {
+			Ti.Platform.openURL("http://appsbyrachel.com");
+		});
+		
+		var lbl1 = Ti.UI.createLabel({
+			text: label,
+			color: 'black',
+			top: 5,
+			bottom: 5,
+			height: 'auto',
+			left: 10,
+			right: 10,
+			textAlign: 'left',
+		    font:app.Font.button1,
+		    touchEnabled: false
 		});
 		row.add(lbl1);
 
