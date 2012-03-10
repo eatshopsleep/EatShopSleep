@@ -810,8 +810,8 @@ function WinBizDetail(data) {
 			function(evt) {
 				Ti.API.error("Error: " + evt.error);
 			    Titanium.UI.createAlertDialog({
-			        title: "API call failed",
-			        message: evt,
+			        title: "Yelp",
+			        message: "Yelp search could not be completed.",
 			        buttonNames: ['OK']
 			    }).show();
 		});

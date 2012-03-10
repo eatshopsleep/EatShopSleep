@@ -584,8 +584,8 @@ function WinSearch() {
 					function(evt) {
 						Ti.API.error("Error: " + evt.error);
 					    Titanium.UI.createAlertDialog({
-					        title: "API call failed",
-					        message: evt,
+					        title: "Yelp",
+					        message: "Yelp search could not be completed.",
 					        buttonNames: ['OK']
 					    }).show();
 				});
@@ -611,8 +611,8 @@ function WinSearch() {
 					function(evt) {
 						Ti.API.error("Error: " + evt.error);
 					    Titanium.UI.createAlertDialog({
-					        title: "API call failed",
-					        message: evt,
+					        title: "Yelp",
+					        message: "Yelp search could not be completed.",
 					        buttonNames: ['OK']
 					    }).show();
 				});
@@ -639,8 +639,8 @@ function WinSearch() {
 					function(evt) {
 						Ti.API.error("Error: " + evt.error);
 					    Titanium.UI.createAlertDialog({
-					        title: "API call failed",
-					        message: evt,
+					        title: "Yelp",
+					        message: "Yelp search could not be completed.",
 					        buttonNames: ['OK']
 					    }).show();
 				});
@@ -700,8 +700,8 @@ function WinSearch() {
 									function(evt) {
 										Ti.API.error("Error: " + evt.error);
 									    Titanium.UI.createAlertDialog({
-									        title: "API call failed",
-									        message: evt,
+									        title: "Yelp",
+									        message: "Yelp search could not be completed.",
 									        buttonNames: ['OK']
 									    }).show();
 								});
@@ -709,8 +709,8 @@ function WinSearch() {
 							function(evt) {
 								Ti.API.error("Error: " + evt.error);
 							    Titanium.UI.createAlertDialog({
-							        title: "API call failed",
-							        message: evt,
+							        title: "Yelp",
+							        message: "Yelp search could not be completed.",
 							        buttonNames: ['OK']
 							    }).show();
 						});
@@ -718,8 +718,8 @@ function WinSearch() {
 					function(evt) {
 						Ti.API.error("Error: " + evt.error);
 					    Titanium.UI.createAlertDialog({
-					        title: "API call failed",
-					        message: evt,
+					        title: "Yelp",
+					        message: "Yelp search could not be completed.",
 					        buttonNames: ['OK']
 					    }).show();
 				});
