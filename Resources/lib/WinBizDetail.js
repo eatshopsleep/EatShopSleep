@@ -75,7 +75,7 @@ function WinBizDetail(data) {
 			height: 100,
 			left:10,
 			width: 100,
-			borderColor: Ti.Platform.osname == 'android' ? null : 'gray',
+			//borderColor: Ti.Platform.osname == 'android' ? null : 'gray',
 			bottom: 1,
 			touchEnabled: false,
 			backgroundColor: 'white'
@@ -672,7 +672,7 @@ function WinBizDetail(data) {
 								height: 100,
 								left:10,
 								width: 100,
-								borderColor: Ti.Platform.osname == 'android' ? null : 'gray',
+								//borderColor: Ti.Platform.osname == 'android' ? null : 'gray',
 								bottom: 1,
 								backgroundColor: 'white'
 							});

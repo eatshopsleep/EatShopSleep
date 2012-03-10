@@ -8,10 +8,18 @@ function WinFilter() {
 		tempFilterSettings[key] = app.FilterSettings[key];
 	}
 	
-	var btnClose = Ti.UI.createButton({
+	var btnCancel = Ti.UI.createButton({
+		title:'Cancel'
+	});
+	btnCancel.addEventListener('click', function() {
+		self.close();
+		app.winFilter = null;
+	});
+	
+	var btnGo = Ti.UI.createButton({
 		title:'Go'
 	});
-	btnClose.addEventListener('click', function() {
+	btnGo.addEventListener('click', function() {
 		self.close();
 		
 		if (checkChanges() == true) {
@@ -27,7 +35,8 @@ function WinFilter() {
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
 		barColor: app.HEADER_COLOR,
 		title: 'Filter',
-		rightNavButton: btnClose,
+		rightNavButton: btnGo,
+		leftNavButton: btnCancel,
 		modal: true
 	});
 	self.addEventListener('android:back', function() {
@@ -55,13 +64,29 @@ function WinFilter() {
 			height: 44,
 			backgroundImage: '/images/toolbar_background.png',
 		});
+		var btnCancel = Ti.UI.createLabel({
+			text: 'Cancel',
+			color: 'white',
+			left: 10,
+			height: 34,
+			width: 54,
+			textAlign: 'center',
+			font:app.Font.button1,
+			backgroundImage: '/images/toolbar_button_54x34.png',
+			backgroundSelectedImage: '/images/toolbar_button_54x34_pressed.png',
+		});
+		btnCancel.addEventListener('click', function() {
+			self.close();
+			app.winFilter = null;
+		});
+		vwTop.add(btnCancel);
 		
 		var lblHeader = Ti.UI.createLabel({
 			text: 'Filter',
 			color: 'white',
 			height: 44,
-			left: 10,
-			textAlign: 'left',
+			//left: 10,
+			textAlign: 'center',
 		    font:app.Font.h1
 		});
 		vwTop.add(lblHeader);

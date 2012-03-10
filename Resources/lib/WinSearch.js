@@ -1039,40 +1039,22 @@ function WinSearch() {
 		switch (app.FilterSettings.Industry) {
 		case app.Filter.INDUSTRY_FOOD:
 			googleMap.evalJS('setLayerOSHAFood(\"' + where + '\");');
-			if (name) {
-				wvDolList.evalJS('setLayerOSHAFood(\"' + where + '\",\"' + '' + '\");');
-			} else {
-				wvDolList.evalJS('setLayerOSHAFood(\"' + where + '\",\"' + ll + '\");');
-			}
+			wvDolList.evalJS('setLayerOSHAFood(\"' + where + '\",\"' + ll + '\");');
 			break;	
 		case app.Filter.INDUSTRY_RETAIL:
 			googleMap.evalJS('setLayerOSHARetail(\"' + where + '\");');
-			if (name) {
-				wvDolList.evalJS('setLayerOSHARetail(\"' + where + '\",\"' + '' + '\");');
-			} else {
-				wvDolList.evalJS('setLayerOSHARetail(\"' + where + '\",\"' + ll + '\");');
-			}
+			wvDolList.evalJS('setLayerOSHARetail(\"' + where + '\",\"' + ll + '\");');
 			break;
 		case app.Filter.INDUSTRY_HOSPITALITY:
 			googleMap.evalJS('setLayerOSHAHospitality(\"' + where + '\");');
-			if (name) {
-				wvDolList.evalJS('setLayerOSHAHospitality(\"' + where + '\",\"' + '' + '\");');
-			} else {
-				wvDolList.evalJS('setLayerOSHAHospitality(\"' + where + '\",\"' + ll + '\");');
-			}
+			wvDolList.evalJS('setLayerOSHAHospitality(\"' + where + '\",\"' + ll + '\");');
 			break;
 		case app.Filter.INDUSTRY_ALL:
 			googleMap.evalJS('setLayerOSHAFull(\"' + where + '\");');
 			
-			if (name) {
-				wvDolList.evalJS('setLayerOSHAFood(\"' + where + '\",\"' + '' + '\");');
-				wvDolList.evalJS('setLayerOSHARetail(\"' + where + '\",\"' + '' + '\");');
-				wvDolList.evalJS('setLayerOSHAHospitality(\"' + where + '\",\"' + '' + '\");');
-			} else {
-				wvDolList.evalJS('setLayerOSHAFood(\"' + where + '\",\"' + ll + '\");');
-				wvDolList.evalJS('setLayerOSHARetail(\"' + where + '\",\"' + ll + '\");');
-				wvDolList.evalJS('setLayerOSHAHospitality(\"' + where + '\",\"' + ll + '\");');
-			}
+			wvDolList.evalJS('setLayerOSHAFood(\"' + where + '\",\"' + ll + '\");');
+			wvDolList.evalJS('setLayerOSHARetail(\"' + where + '\",\"' + ll + '\");');
+			wvDolList.evalJS('setLayerOSHAHospitality(\"' + where + '\",\"' + ll + '\");');
 			break;
 		}
 	}
@@ -1107,39 +1089,22 @@ function WinSearch() {
 		switch (app.FilterSettings.Industry) {
 		case app.Filter.INDUSTRY_FOOD:
 			googleMap.evalJS('setLayerWHDFood(\"' + where + '\");');
-			if (name) {
-				wvDolList.evalJS('setLayerWHDFood(\"' + where + '\",\"' + '' + '\");');
-			} else {
-				wvDolList.evalJS('setLayerWHDFood(\"' + where + '\",\"' + ll + '\");');
-			}
+			wvDolList.evalJS('setLayerWHDFood(\"' + where + '\",\"' + ll + '\");');
 			break;	
 		case app.Filter.INDUSTRY_RETAIL:
 			googleMap.evalJS('setLayerWHDRetail(\"' + where + '\");');
-			if (name) {
-				wvDolList.evalJS('setLayerWHDRetail(\"' + where + '\",\"' + '' + '\");');
-			} else {
-				wvDolList.evalJS('setLayerWHDRetail(\"' + where + '\",\"' + ll + '\");');
-			}
+			wvDolList.evalJS('setLayerWHDRetail(\"' + where + '\",\"' + ll + '\");');
 			break;
 		case app.Filter.INDUSTRY_HOSPITALITY:
 			googleMap.evalJS('setLayerWHDHospitality(\"' + where + '\");');
-			if (name) {
-				wvDolList.evalJS('setLayerWHDHospitality(\"' + where + '\",\"' + '' + '\");');
-			} else {
-				wvDolList.evalJS('setLayerWHDHospitality(\"' + where + '\",\"' + ll + '\");');
-			}
+			wvDolList.evalJS('setLayerWHDHospitality(\"' + where + '\",\"' + ll + '\");');
 			break;
 		case app.Filter.INDUSTRY_ALL:
 			googleMap.evalJS('setLayerWHDFull(\"' + where + '\");');
-			if (name) {
-				wvDolList.evalJS('setLayerWHDFood(\"' + where + '\",\"' + '' + '\");');
-				wvDolList.evalJS('setLayerWHDRetail(\"' + where + '\",\"' + '' + '\");');
-				wvDolList.evalJS('setLayerWHDHospitality(\"' + where + '\",\"' + '' + '\");');
-			} else {
-				wvDolList.evalJS('setLayerWHDFood(\"' + where + '\",\"' + ll + '\");');
-				wvDolList.evalJS('setLayerWHDRetail(\"' + where + '\",\"' + ll + '\");');
-				wvDolList.evalJS('setLayerWHDHospitality(\"' + where + '\",\"' + ll + '\");');
-			}
+			
+			wvDolList.evalJS('setLayerWHDFood(\"' + where + '\",\"' + ll + '\");');
+			wvDolList.evalJS('setLayerWHDRetail(\"' + where + '\",\"' + ll + '\");');
+			wvDolList.evalJS('setLayerWHDHospitality(\"' + where + '\",\"' + ll + '\");');
 			break;
 		}
 	}

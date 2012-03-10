@@ -38,8 +38,8 @@ function WinLocation() {
 			text: 'Map Location',
 			color: 'white',
 			height: 44,
-			left: 10,
-			textAlign: 'left',
+			//left: 10,
+			textAlign: 'center',
 		    font:app.Font.h1
 		});
 		vwTop.add(lblHeader);

@@ -35,8 +35,7 @@ exports.searchRequest = function(term, address, zip, category_filter, ll, succes
 	parameters = [];
 	if (term) {
 		parameters.push(['term', term]);
-	}
-	else {
+	} else {
 		parameters.push(['sort', 1]); // sort by distance
 	}
 	if (category_filter) {
@@ -45,8 +44,7 @@ exports.searchRequest = function(term, address, zip, category_filter, ll, succes
 	
 	if (ll) {
 		parameters.push(['ll', ll]);	
-	}
-	else {
+	} else {
 		parameters.push(['location', address + ',' + zip]);	
 	}
 	parameters.push(['oauth_consumer_key', auth.consumerKey]);
