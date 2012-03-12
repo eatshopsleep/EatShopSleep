@@ -654,14 +654,18 @@ function WinBizDetail(data) {
 			    var jsonResponse = JSON.parse(response);
 			    // Use Yelp Data?
 			    if (jsonResponse.businesses.length > 0) {
-	
+					
 			    	var yelp_street_num = jsonResponse.businesses[0].location.address[0];
-				    yelp_street_num = yelp_street_num.split(' ',1);
-				    yelp_street_num = yelp_street_num[0];
+			    	if (typeof yelp_street_num == 'string') {
+			    		yelp_street_num = yelp_street_num.split(' ',1);
+				    	yelp_street_num = yelp_street_num[0];	
+			    	}
 				    
 				    var dol_street_num = data.address;
-				    dol_street_num = dol_street_num.split(' ',1);
-				    dol_street_num = dol_street_num[0];
+				    if (typeof dol_street_num == 'string') {
+				    	dol_street_num = dol_street_num.split(' ',1);
+				    	dol_street_num = dol_street_num[0];	
+				    }
 				    
 			    	if (yelp_street_num == dol_street_num) {
 			    		
@@ -680,70 +684,72 @@ function WinBizDetail(data) {
 			    				rowEstablishmentAddress.remove(wvBizMap);
 			    			}
 							rowEstablishmentAddress.add(imgEstablishment);
-						}
-						else {
+						} else {
 							wvBizMap.bottom = 1;
 						}
 						lblAddress.bottom = 1;
 						
-						var rowCallHeader = Ti.UI.createTableViewRow({
-							height: Ti.Platform.osname == 'android' ? 40 : 'auto',
-							className: 'section_header',
-							backgroundColor: app.HEADER_COLOR,
-							selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
-							backgroundSelectedColor: app.HEADER_COLOR
-						});
-						
-						var lblCall = Ti.UI.createLabel({
-							text: 'Call',
-							left: 10,
-							top: 5,
-							bottom: 5,
-							height: 'auto',
-							width: 'auto',
-						    font:app.Font.h2,
-						    textAlign:'left',
-						    color: 'white',
-						});
-						rowCallHeader.add(lblCall);
-						tableView.insertRowAfter(1,rowCallHeader);
-						
-						var rowPhone = Ti.UI.createTableViewRow({
-							height: Ti.Platform.osname == 'android' ? 40 : 'auto',
-							hasChild:true,
-							className: 'phone',
-							selectedBackgroundColor: app.ROW_SELECTION_COLOR,
-						});
-						rowPhone.addEventListener('click', function(evt) {
-							var a = Titanium.UI.createAlertDialog({
-								title: jsonResponse.businesses[0].display_phone,
-								buttonNames: ['Cancel','Call'],
-								cancel: 0
+						if (jsonResponse.businesses[0].display_phone) {
+							var rowCallHeader = Ti.UI.createTableViewRow({
+								height: Ti.Platform.osname == 'android' ? 40 : 'auto',
+								className: 'section_header',
+								backgroundColor: app.HEADER_COLOR,
+								selectionStyle: Titanium.UI.iPhone.TableViewCellSelectionStyle.NONE,
+								backgroundSelectedColor: app.HEADER_COLOR
+							});
+							
+							var lblCall = Ti.UI.createLabel({
+								text: 'Call',
+								left: 10,
+								top: 5,
+								bottom: 5,
+								height: 'auto',
+								width: 'auto',
+							    font:app.Font.h2,
+							    textAlign:'left',
+							    color: 'white',
+							});
+							rowCallHeader.add(lblCall);
+							tableView.insertRowAfter(1,rowCallHeader);
+							
+							var rowPhone = Ti.UI.createTableViewRow({
+								height: Ti.Platform.osname == 'android' ? 40 : 'auto',
+								hasChild:true,
+								className: 'phone',
+								selectedBackgroundColor: app.ROW_SELECTION_COLOR,
+							});
+							rowPhone.addEventListener('click', function(evt) {
+								var a = Titanium.UI.createAlertDialog({
+									title: jsonResponse.businesses[0].display_phone,
+									buttonNames: ['Cancel','Call'],
+									cancel: 0
+									
+								});
+								a.addEventListener('click', function(evt) {
+									if (evt.index == 1) {
+										Titanium.Platform.openURL('tel:' + jsonResponse.businesses[0].phone);
+									}
+								});
+								
+								a.show();
 								
 							});
-							a.addEventListener('click', function(evt) {
-								if (evt.index == 1) {
-									Titanium.Platform.openURL('tel:' + jsonResponse.businesses[0].phone);
-								}
+							
+							var lblPhone = Ti.UI.createLabel({
+								text: jsonResponse.businesses[0].display_phone,
+								left: 10,
+								top: 5,
+								bottom: 5,
+								height: 'auto',
+								width: 'auto',
+							    font:app.Font.p1,
+							    color: 'black',
+							    touchEnabled: false
 							});
-							
-							a.show();
-							
-						});
+							rowPhone.add(lblPhone);
+							tableView.insertRowAfter(2,rowPhone);
+						}
 						
-						var lblPhone = Ti.UI.createLabel({
-							text: jsonResponse.businesses[0].display_phone,
-							left: 10,
-							top: 5,
-							bottom: 5,
-							height: 'auto',
-							width: 'auto',
-						    font:app.Font.p1,
-						    color: 'black',
-						    touchEnabled: false
-						});
-						rowPhone.add(lblPhone);
-						tableView.insertRowAfter(2,rowPhone);
 						
 						var rowCustomerReviews = Ti.UI.createTableViewRow({
 							height: Ti.Platform.osname == 'android' ? 30 : 'auto',
