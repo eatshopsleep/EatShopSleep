@@ -326,6 +326,7 @@
 	}
 	
 	function setLayerOSHAFood(where) {
+		
 		layerOSHA_food.setOptions({
 			query: {
 		        select: 'col14',
@@ -414,21 +415,6 @@
 		
 	}
 	
-	function clearLayers() {
-		if (currentInfoWin) {
-			currentInfoWin.close();
-		}
-		
-		layerOSHA_food.setMap(null);
-		layerOSHA_retail.setMap(null);
-		layerOSHA_hospitality.setMap(null);
-		layerOSHA_full.setMap(null);
-		layerWHD_food.setMap(null);
-		layerWHD_retail.setMap(null);
-		layerWHD_hospitality.setMap(null);
-		layerWHD_full.setMap(null);
-	}
-	
 	function initialize() {
 		
 	  	currentInfoWin = null;
@@ -490,6 +476,116 @@
 		
 		
 	}
+	
+	function setLayer(evt) {
+		
+		if (evt.source == 'OSHA') {
+			switch (evt.industry) {
+				case 0:
+					layerOSHA_food.setOptions({
+						query: {
+					        select: 'col14',
+					    	from: 1361743,
+					    	where: evt.where
+					    }  
+					});
+					layerOSHA_food.setMap(map);
+					break;
+				case 1:
+					layerOSHA_retail.setOptions({
+						query: {
+					        select: 'col14',
+					    	from: 1361563,
+					    	where: evt.where
+					    }  
+					});
+					layerOSHA_retail.setMap(map);
+					break;
+				case 2:
+					layerOSHA_hospitality.setOptions({
+						query: {
+					        select: 'col14',
+					    	from: 1361744,
+					    	where: evt.where
+					    }  
+					});
+					layerOSHA_hospitality.setMap(map);
+					break;
+				case 3:
+					layerOSHA_full.setOptions({
+						query: {
+					        select: 'col14',
+					    	from: 1482673,
+					    	where: evt.where
+					    }  
+					});
+					layerOSHA_full.setMap(map);
+					break;
+			}
+			
+		} else {
+			switch (evt.industry) {
+				case 0:
+					layerWHD_food.setOptions({
+						query: {
+					        select: 'col22',
+					    	from: 1377910,
+					    	where: evt.where
+					    }  
+					});
+					layerWHD_food.setMap(map);
+					break;
+				case 1:
+					layerWHD_retail.setOptions({
+						query: {
+					        select: 'col22',
+					    	from: 1377447,
+					    	where: evt.where
+					    }  
+					});
+					layerWHD_retail.setMap(map);
+					break;
+				case 2:
+					layerWHD_hospitality.setOptions({
+						query: {
+					        select: 'col22',
+					    	from: 1377445,
+					    	where: evt.where
+					    }  
+					});
+					layerWHD_hospitality.setMap(map);
+					break;
+				case 3:
+					layerWHD_full.setOptions({
+						query: {
+					        select: 'col22',
+					    	from: 1482571,
+					    	where: evt.where
+					    }  
+					});
+					layerWHD_full.setMap(map);
+					break;
+			}
+		}
+		
+	}
+	Ti.App.addEventListener('setLayer',setLayer);
+	
+	function clearLayers() {
+		if (currentInfoWin) {
+			currentInfoWin.close();
+		}
+		
+		layerOSHA_food.setMap(null);
+		layerOSHA_retail.setMap(null);
+		layerOSHA_hospitality.setMap(null);
+		layerOSHA_full.setMap(null);
+		layerWHD_food.setMap(null);
+		layerWHD_retail.setMap(null);
+		layerWHD_hospitality.setMap(null);
+		layerWHD_full.setMap(null);
+	}
+	Ti.App.addEventListener('clearLayers',clearLayers);
 	
 	function setMapCenter(evt) {
 		var pos = new google.maps.LatLng(evt.lat, evt.lon);
@@ -573,6 +669,8 @@
 		Ti.App.removeEventListener('clearYelpMarkers',clearYelpMarkers);
 		Ti.App.removeEventListener('geocode',geocode);
 		Ti.App.removeEventListener('setMapCenter',setMapCenter);
+		Ti.App.removeEventListener('clearLayers',clearLayers);
+		Ti.App.removeEventListener('setLayer',setLayer);
 	}
 	
 </script>
