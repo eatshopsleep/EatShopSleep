@@ -170,7 +170,7 @@ function WinSearch() {
 		});
 		
 		var btnFilter = Titanium.UI.createLabel({
-			text: 'Filter',
+			text: 'Search',
 			color: 'white',
 			right: 10,
 			height: 34,
@@ -241,7 +241,7 @@ function WinSearch() {
 		});
 		
 		var btnFilter = Titanium.UI.createButton({
-			title: 'Filter',
+			title: 'Search',
 			style:Titanium.UI.iPhone.SystemButtonStyle.BORDERED
 		});
 		btnFilter.addEventListener('click', function(evt){
