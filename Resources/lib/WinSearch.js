@@ -120,14 +120,12 @@ function WinSearch() {
 	self.add(btnRedoSearch);
 	
 	if (Ti.Platform.osname == 'android') {
-		var btnNav = Titanium.UI.createLabel({
-			text: 'Nav',
-			color: 'white',
+		
+		var btnNav = Titanium.UI.createImageView({
 			left: 10,
 			height: 34,
 			width: 54,
-			textAlign: 'center',
-			font:app.Font.button1,
+			image: '/images/arrow_54x34.png',
 			backgroundImage: '/images/toolbar_button_54x34.png',
 			backgroundSelectedImage: '/images/toolbar_button_54x34_pressed.png',
 		});
