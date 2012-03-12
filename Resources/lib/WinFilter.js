@@ -40,12 +40,12 @@ function WinFilter() {
 		modal: true
 	});
 	self.addEventListener('android:back', function() {
-		
+		self.close();
 		if (checkChanges() == true) {
 			app.winSearch.update(app.FilterSettings.SearchName);
 				
 		} 
-		self.close();
+		
 		app.winFilter = null;
 		
 	});
@@ -103,11 +103,11 @@ function WinFilter() {
 			backgroundSelectedImage: '/images/toolbar_button_54x34_pressed.png',
 		});
 		btnGo.addEventListener('click', function(evt){
+			self.close();
 			if (checkChanges() == true) {
 				app.winSearch.update(app.FilterSettings.SearchName);	
 			}
 			
-			self.close();
 			app.winFilter = null;
 		});
 		vwTop.add(btnGo);

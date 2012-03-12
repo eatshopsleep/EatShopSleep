@@ -490,13 +490,14 @@
 		
 		
 	}
-
-	Ti.App.addEventListener('setMapCenter',function(evt) {
+	
+	function setMapCenter(evt) {
 		var pos = new google.maps.LatLng(evt.lat, evt.lon);
 		map.setCenter(pos);
-	});
+	}
+	Ti.App.addEventListener('setMapCenter',setMapCenter);
 	
-	Ti.App.addEventListener('geocode',function(evt) {
+	function geocode(evt) {
 		var geocoder = new google.maps.Geocoder();
 		
 		geocoder.geocode(
@@ -521,9 +522,10 @@
 			}
 		);
 	
-	});
+	}
+	Ti.App.addEventListener('geocode',geocode);
 	
-	Ti.App.addEventListener('clearYelpMarkers',function(evt) {
+	function clearYelpMarkers(evt) {
 		if (yelpFoodMarkers) {
 		    for (var i in yelpFoodMarkers) {
 		      yelpFoodMarkers[i].setMap(null);
@@ -540,25 +542,38 @@
 		    }
 		}
 		
-	});
+	}
+	Ti.App.addEventListener('clearYelpMarkers',clearYelpMarkers);
 	
-	Ti.App.addEventListener('setYelpFoodMarkers',function(evt) {
+	function setYelpFoodMarkers(evt) {
 		var jsonResponse = JSON.parse(evt.response);
 		
 		setYelpMarkers('Food','../images/yellow_bubble_yelp.png',yelpFoodMarkers,jsonResponse,evt.searchName);
-	});
+	}
+	Ti.App.addEventListener('setYelpFoodMarkers', setYelpFoodMarkers);
 	
-	Ti.App.addEventListener('setYelpRetailMarkers',function(evt) {
+	function setYelpRetailMarkers(evt) {
 		var jsonResponse = JSON.parse(evt.response);
 		
 		setYelpMarkers('Retail','../images/blue_bubble_yelp.png',yelpRetailMarkers,jsonResponse,evt.searchName);
-	});
+	}
+	Ti.App.addEventListener('setYelpRetailMarkers',setYelpRetailMarkers);
 	
-	Ti.App.addEventListener('setYelpHospitalityMarkers',function(evt) {
+	function setYelpHospitalityMarkers(evt) {
 		var jsonResponse = JSON.parse(evt.response);
 		
 		setYelpMarkers('Hospitality','../images/purple_bubble_yelp.png',yelpHospitalityMarkers,jsonResponse,evt.searchName);
-	});
+	}
+	Ti.App.addEventListener('setYelpHospitalityMarkers',setYelpHospitalityMarkers);
+	
+	function removeListeners() {
+		Ti.App.removeEventListener('setYelpFoodMarkers', setYelpFoodMarkers);
+		Ti.App.removeEventListener('setYelpRetailMarkers',setYelpRetailMarkers);
+		Ti.App.removeEventListener('setYelpHospitalityMarkers',setYelpHospitalityMarkers);
+		Ti.App.removeEventListener('clearYelpMarkers',clearYelpMarkers);
+		Ti.App.removeEventListener('geocode',geocode);
+		Ti.App.removeEventListener('setMapCenter',setMapCenter);
+	}
 	
 </script>
 
