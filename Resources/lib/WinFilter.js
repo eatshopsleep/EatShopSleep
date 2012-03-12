@@ -34,7 +34,7 @@ function WinFilter() {
 		backgroundColor:'white',
 		navBarHidden: Ti.Platform.osname == 'android' ? true : false,
 		barColor: app.HEADER_COLOR,
-		title: 'Filter',
+		title: 'Search',
 		rightNavButton: btnGo,
 		leftNavButton: btnCancel,
 		modal: true
@@ -82,7 +82,7 @@ function WinFilter() {
 		vwTop.add(btnCancel);
 		
 		var lblHeader = Ti.UI.createLabel({
-			text: 'Filter',
+			text: 'Search',
 			color: 'white',
 			height: 44,
 			//left: 10,
