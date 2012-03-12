@@ -13,6 +13,7 @@ function WinSearch() {
 			app.CurrentLocation.latitude = googleMap.evalJS('getMapCenterLat();');
 			app.CurrentLocation.longitude = googleMap.evalJS('getMapCenterLng();');
 			googleMap.evalJS('removeListeners();');
+			wvDolList.evalJS('removeListeners();');
 			self.close();
 			
 			app.winSearch = null;
@@ -35,6 +36,7 @@ function WinSearch() {
 	self.addEventListener('android:back', function(){
 		app.CurrentLocation.latitude = googleMap.evalJS('getMapCenterLat();');
 		app.CurrentLocation.longitude = googleMap.evalJS('getMapCenterLng();');
+		wvDolList.evalJS('removeListeners();');
 		googleMap.evalJS('removeListeners();');
 		
 		self.close();
@@ -1039,27 +1041,9 @@ function WinSearch() {
 			
 		} 
 		
-		switch (app.FilterSettings.Industry) {
-		case app.Filter.INDUSTRY_FOOD:
-			googleMap.evalJS('setLayerOSHAFood(\"' + where + '\");');
-			wvDolList.evalJS('setLayerOSHAFood(\"' + where + '\",\"' + ll + '\");');
-			break;	
-		case app.Filter.INDUSTRY_RETAIL:
-			googleMap.evalJS('setLayerOSHARetail(\"' + where + '\");');
-			wvDolList.evalJS('setLayerOSHARetail(\"' + where + '\",\"' + ll + '\");');
-			break;
-		case app.Filter.INDUSTRY_HOSPITALITY:
-			googleMap.evalJS('setLayerOSHAHospitality(\"' + where + '\");');
-			wvDolList.evalJS('setLayerOSHAHospitality(\"' + where + '\",\"' + ll + '\");');
-			break;
-		case app.Filter.INDUSTRY_ALL:
-			googleMap.evalJS('setLayerOSHAFull(\"' + where + '\");');
-			
-			wvDolList.evalJS('setLayerOSHAFood(\"' + where + '\",\"' + ll + '\");');
-			wvDolList.evalJS('setLayerOSHARetail(\"' + where + '\",\"' + ll + '\");');
-			wvDolList.evalJS('setLayerOSHAHospitality(\"' + where + '\",\"' + ll + '\");');
-			break;
-		}
+		Ti.App.fireEvent('setLayer', {where: where, source:'OSHA', industry: app.FilterSettings.Industry});
+		Ti.App.fireEvent('getFusionTable', {where: where, ll: ll, source:'OSHA', industry: app.FilterSettings.Industry});
+		
 	}
 	
 	function sourceWHD(name,ll) {
@@ -1089,27 +1073,9 @@ function WinSearch() {
 			
 		} 
 		
-		switch (app.FilterSettings.Industry) {
-		case app.Filter.INDUSTRY_FOOD:
-			googleMap.evalJS('setLayerWHDFood(\"' + where + '\");');
-			wvDolList.evalJS('setLayerWHDFood(\"' + where + '\",\"' + ll + '\");');
-			break;	
-		case app.Filter.INDUSTRY_RETAIL:
-			googleMap.evalJS('setLayerWHDRetail(\"' + where + '\");');
-			wvDolList.evalJS('setLayerWHDRetail(\"' + where + '\",\"' + ll + '\");');
-			break;
-		case app.Filter.INDUSTRY_HOSPITALITY:
-			googleMap.evalJS('setLayerWHDHospitality(\"' + where + '\");');
-			wvDolList.evalJS('setLayerWHDHospitality(\"' + where + '\",\"' + ll + '\");');
-			break;
-		case app.Filter.INDUSTRY_ALL:
-			googleMap.evalJS('setLayerWHDFull(\"' + where + '\");');
-			
-			wvDolList.evalJS('setLayerWHDFood(\"' + where + '\",\"' + ll + '\");');
-			wvDolList.evalJS('setLayerWHDRetail(\"' + where + '\",\"' + ll + '\");');
-			wvDolList.evalJS('setLayerWHDHospitality(\"' + where + '\",\"' + ll + '\");');
-			break;
-		}
+		Ti.App.fireEvent('setLayer', {where: where, source:'WHD', industry: app.FilterSettings.Industry});
+		Ti.App.fireEvent('getFusionTable', {where: where, ll: ll, source:'WHD', industry: app.FilterSettings.Industry});
+		
 	}
 	
 	function sourceDOL(name,ll) {

@@ -12,172 +12,205 @@
  
 <script type="text/javascript" src="http://www.google.com/jsapi"></script> 
 <script type="text/javascript" id="script"> 
-google.load('visualization', '1');
-
-var oshaCols = "SELECT activity_nr,estab_name,site_address,site_city,site_state,site_zip,total_current_penalty,osha_violation_indicator,serious_violations,total_violations,yahoo_lat,yahoo_lon ";
-
-var whdCols = "SELECT trade_nm,street_addr_1_txt,city_nm,st_cd,zip_cd,whd_violation_indicator,naics_code_description,flsa_violtn_cnt,flsa_repeat_violator,flsa_bw_atp_amt,flsa_ee_atp_cnt,flsa_mw_bw_atp_amt,flsa_ot_bw_atp_amt,flsa_15a3_bw_atp_amt,flsa_cmp_assd_amt,flsa_cl_violtn_cnt,flsa_cl_minor_cnt,flsa_cl_cmp_assd_amt,findings_start_date,findings_end_date,yahoo_lat,yahoo_lon ";
-
-var industry = '';
-
-var defaultLatlng = '38.895112,-77.036366';
-
-function setLayerOSHAFood(where,ll) {
-	var queryText = "\"" + oshaCols + "FROM 1361743 WHERE yahoo_lat NOT EQUAL TO \'\' ";
-	if (where != '') {
-		queryText = queryText + "AND " + where;
+	google.load('visualization', '1');
+	
+	var oshaCols = "SELECT activity_nr,estab_name,site_address,site_city,site_state,site_zip,total_current_penalty,osha_violation_indicator,serious_violations,total_violations,yahoo_lat,yahoo_lon ";
+	
+	var whdCols = "SELECT trade_nm,street_addr_1_txt,city_nm,st_cd,zip_cd,whd_violation_indicator,naics_code_description,flsa_violtn_cnt,flsa_repeat_violator,flsa_bw_atp_amt,flsa_ee_atp_cnt,flsa_mw_bw_atp_amt,flsa_ot_bw_atp_amt,flsa_15a3_bw_atp_amt,flsa_cmp_assd_amt,flsa_cl_violtn_cnt,flsa_cl_minor_cnt,flsa_cl_cmp_assd_amt,findings_start_date,findings_end_date,yahoo_lat,yahoo_lon ";
+	
+	var industry = '';
+	
+	var defaultLatlng = '38.895112,-77.036366';
+	
+	function getOSHAFood(where,ll) {
+		var queryText = "\"" + oshaCols + "FROM 1361743 WHERE yahoo_lat NOT EQUAL TO \'\' ";
+		if (where != '') {
+			queryText = queryText + "AND " + where;
+			
+		} 
+		if (ll == '') {
+			queryText += " ORDER BY estab_name LIMIT 20\" ";
+		}
+		else {
+			queryText += " ORDER BY ST_DISTANCE(col14, LATLNG(" + ll + ")) LIMIT 20\" ";
+		}
 		
-	} 
-	if (ll == '') {
-		queryText += " ORDER BY estab_name LIMIT 20\" ";
-	}
-	else {
-		queryText += " ORDER BY ST_DISTANCE(col14, LATLNG(" + ll + ")) LIMIT 20\" ";
-	}
-	
-	queryText = encodeURIComponent(queryText);
-	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
-	
-	
-	query.send(function(response){
-		var json = response.getDataTable().toJSON();
-
-		Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: 'Food'});
+		queryText = encodeURIComponent(queryText);
+		var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
 		
-	});
-}
-
-function setLayerOSHARetail(where,ll) {
-	var queryText = "\"" + oshaCols + "FROM 1361563 WHERE yahoo_lat NOT EQUAL TO \'\' ";
-	if (where != '') {
-		queryText = queryText + "AND " + where;
 		
-	} 
-	if (ll == '') {
-		queryText += " ORDER BY estab_name LIMIT 20\" ";
-	}
-	else {
-		queryText += " ORDER BY ST_DISTANCE(col14, LATLNG(" + ll + ")) LIMIT 20\" ";
+		query.send(function(response){
+			var json = response.getDataTable().toJSON();
+	
+			Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: 'Food'});
+			
+		});
 	}
 	
-	queryText = encodeURIComponent(queryText);
-	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
+	function getOSHARetail(where,ll) {
+		var queryText = "\"" + oshaCols + "FROM 1361563 WHERE yahoo_lat NOT EQUAL TO \'\' ";
+		if (where != '') {
+			queryText = queryText + "AND " + where;
+			
+		} 
+		if (ll == '') {
+			queryText += " ORDER BY estab_name LIMIT 20\" ";
+		}
+		else {
+			queryText += " ORDER BY ST_DISTANCE(col14, LATLNG(" + ll + ")) LIMIT 20\" ";
+		}
 		
-	query.send(function(response){
-		var json = response.getDataTable().toJSON();
-
-		Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: 'Retail'});
+		queryText = encodeURIComponent(queryText);
+		var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
+			
+		query.send(function(response){
+			var json = response.getDataTable().toJSON();
+	
+			Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: 'Retail'});
+			
+		});
+	}
+	
+	function getOSHAHospitality(where,ll) {
+		var queryText = "\"" + oshaCols + "FROM 1361744 WHERE yahoo_lat NOT EQUAL TO \'\' ";
+		if (where != '') {
+			queryText = queryText + "AND " + where;
+			
+		} 
+		if (ll == '') {
+			queryText += " ORDER BY estab_name LIMIT 20\" ";
+		}
+		else {
+			queryText += " ORDER BY ST_DISTANCE(col14, LATLNG(" + ll + ")) LIMIT 20\" ";
+		}
 		
-	});
-}
-
-function setLayerOSHAHospitality(where,ll) {
-	var queryText = "\"" + oshaCols + "FROM 1361744 WHERE yahoo_lat NOT EQUAL TO \'\' ";
-	if (where != '') {
-		queryText = queryText + "AND " + where;
+		queryText = encodeURIComponent(queryText);
+		var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
 		
-	} 
-	if (ll == '') {
-		queryText += " ORDER BY estab_name LIMIT 20\" ";
-	}
-	else {
-		queryText += " ORDER BY ST_DISTANCE(col14, LATLNG(" + ll + ")) LIMIT 20\" ";
+		query.send(function(response){
+			var json = response.getDataTable().toJSON();
+	
+			Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: 'Hospitality'});
+		});
 	}
 	
-	queryText = encodeURIComponent(queryText);
-	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
-	
-	query.send(function(response){
-		var json = response.getDataTable().toJSON();
-
-		Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: 'Hospitality'});
-	});
-}
-
-function setLayerWHDFood(where,ll) {
-	var queryText = "\"" + whdCols + "FROM 1377910 WHERE yahoo_lat NOT EQUAL TO \'\' ";
-	if (where != '') {
-		queryText = queryText + "AND " + where;
+	function getWHDFood(where,ll) {
+		var queryText = "\"" + whdCols + "FROM 1377910 WHERE yahoo_lat NOT EQUAL TO \'\' ";
+		if (where != '') {
+			queryText = queryText + "AND " + where;
+			
+		} 
+		if (ll == '') {
+			queryText += " ORDER BY trade_nm LIMIT 20\" ";
+		}
+		else {
+			queryText += " ORDER BY ST_DISTANCE(col22, LATLNG(" + ll + ")) LIMIT 20\" ";
+		}
 		
-	} 
-	if (ll == '') {
-		queryText += " ORDER BY trade_nm LIMIT 20\" ";
-	}
-	else {
-		queryText += " ORDER BY ST_DISTANCE(col22, LATLNG(" + ll + ")) LIMIT 20\" ";
-	}
-	
-	queryText = encodeURIComponent(queryText);
-	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
-	
-	query.send(function(response){
-		var json = response.getDataTable().toJSON();
-
-		Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: 'Food'});
-	});
-}
-
-function setLayerWHDRetail(where,ll) {
-	var queryText = "\"" + whdCols + "FROM 1377447 WHERE yahoo_lat NOT EQUAL TO \'\' ";
-	if (where != '') {
-		queryText = queryText + "AND " + where;
+		queryText = encodeURIComponent(queryText);
+		var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
 		
-	} 
-	if (ll == '') {
-		queryText += " ORDER BY trade_nm LIMIT 20\" ";
-	}
-	else {
-		queryText += " ORDER BY ST_DISTANCE(col22, LATLNG(" + ll + ")) LIMIT 20\" ";
+		query.send(function(response){
+			var json = response.getDataTable().toJSON();
+	
+			Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: 'Food'});
+		});
 	}
 	
-	queryText = encodeURIComponent(queryText);
-	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
-	
-	query.send(function(response){
-		var json = response.getDataTable().toJSON();
-
-		Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: 'Retail'});
-	});
-}
-
-function setLayerWHDHospitality(where,ll) {
-	var queryText = "\"" + whdCols + "FROM 1377445 WHERE yahoo_lat NOT EQUAL TO \'\' ";
-	if (where != '') {
-		queryText = queryText + "AND " + where;
+	function getWHDRetail(where,ll) {
+		var queryText = "\"" + whdCols + "FROM 1377447 WHERE yahoo_lat NOT EQUAL TO \'\' ";
+		if (where != '') {
+			queryText = queryText + "AND " + where;
+			
+		} 
+		if (ll == '') {
+			queryText += " ORDER BY trade_nm LIMIT 20\" ";
+		}
+		else {
+			queryText += " ORDER BY ST_DISTANCE(col22, LATLNG(" + ll + ")) LIMIT 20\" ";
+		}
 		
-	} 
-	if (ll == '') {
-		queryText += " ORDER BY trade_nm LIMIT 20\" ";
-	}
-	else {
-		queryText += " ORDER BY ST_DISTANCE(col22, LATLNG(" + ll + ")) LIMIT 20\" ";
-	}
-	
-	queryText = encodeURIComponent(queryText);
-	var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
-	
-	query.send(function(response){
-		var json = response.getDataTable().toJSON();
-		Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: 'Hospitality'});
+		queryText = encodeURIComponent(queryText);
+		var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
 		
-	});
-}
- 
-
-function getOSHAData(response) {
-	var json = response.getDataTable().toJSON();
-	Ti.App.fireEvent('getDOLList', {response: json, source:'OSHA', industry: industry});
-}
-
-function getWHDData(response) {
-	var json = response.getDataTable().toJSON();
-	Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: industry});
-}
-
-function init() {
+		query.send(function(response){
+			var json = response.getDataTable().toJSON();
 	
+			Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: 'Retail'});
+		});
+	}
 	
-}
+	function getWHDHospitality(where,ll) {
+		var queryText = "\"" + whdCols + "FROM 1377445 WHERE yahoo_lat NOT EQUAL TO \'\' ";
+		if (where != '') {
+			queryText = queryText + "AND " + where;
+			
+		} 
+		if (ll == '') {
+			queryText += " ORDER BY trade_nm LIMIT 20\" ";
+		}
+		else {
+			queryText += " ORDER BY ST_DISTANCE(col22, LATLNG(" + ll + ")) LIMIT 20\" ";
+		}
+		
+		queryText = encodeURIComponent(queryText);
+		var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq='  + queryText);
+		
+		query.send(function(response){
+			var json = response.getDataTable().toJSON();
+			Ti.App.fireEvent('getDOLList', {response: json, source:'WHD', industry: 'Hospitality'});
+			
+		});
+	}
+	
+	function getFusionTable(evt) {
+		if (evt.source == 'OSHA') {
+			switch (evt.industry) {
+				case 0:
+					getOSHAFood(evt.where, evt.ll);
+					break;
+				case 1:
+					getOSHARetail(evt.where, evt.ll);
+					break;
+				case 2:
+					getOSHAHospitality(evt.where, evt.ll);
+					break;
+				case 3:
+					getOSHAFood(evt.where, evt.ll);
+					getOSHARetail(evt.where, evt.ll);
+					getOSHAHospitality(evt.where, evt.ll);
+					break;
+			}
+		} else {
+			switch (evt.industry) {
+				case 0:
+					getWHDFood(evt.where, evt.ll);
+					break;
+				case 1:
+					getWHDRetail(evt.where, evt.ll);
+					break;
+				case 2:
+					getWHDHospitality(evt.where, evt.ll);
+					break;
+				case 3:
+					getWHDFood(evt.where, evt.ll);
+					getWHDRetail(evt.where, evt.ll);
+					getWHDHospitality(evt.where, evt.ll);
+					break;
+			}
+		}
+		
+	}
+	Ti.App.addEventListener('getFusionTable', getFusionTable);
+	
+	function removeListeners() {
+		Ti.App.removeEventListener('getFusionTable', getFusionTable);
+	}
+	
+	function init() {
+		
+		
+	}
 
 </script> 
 </head> 
