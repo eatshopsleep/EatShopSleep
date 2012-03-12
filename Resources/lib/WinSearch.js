@@ -12,6 +12,7 @@ function WinSearch() {
 		app.tgSearch.animate({opacity:0,duration:300}, function() {
 			app.CurrentLocation.latitude = googleMap.evalJS('getMapCenterLat();');
 			app.CurrentLocation.longitude = googleMap.evalJS('getMapCenterLng();');
+			googleMap.evalJS('removeListeners();');
 			self.close();
 			
 			app.winSearch = null;
@@ -34,6 +35,7 @@ function WinSearch() {
 	self.addEventListener('android:back', function(){
 		app.CurrentLocation.latitude = googleMap.evalJS('getMapCenterLat();');
 		app.CurrentLocation.longitude = googleMap.evalJS('getMapCenterLng();');
+		googleMap.evalJS('removeListeners();');
 		
 		self.close();
 		app.winSearch = null;
@@ -566,9 +568,10 @@ function WinSearch() {
 				YelpApi.searchRequest(app.FilterSettings.SearchName,null,null, food_category, evt.ll, 
 					function(response) {
 						
+						// WANT PASS ON PARSED VALUES HERE BUT ANDROID WONT SEE THEM: TIMOB-5499
 						var jsonResponse = JSON.parse(response);
 						if (jsonResponse.businesses.length > 0) {
-							// WANT PASS ON PARSED VALUES HERE BUT ANDROID WONT SEE THEM: TIMOB-5499
+							
 					    	Ti.App.fireEvent('setYelpFoodMarkers', {response:response, searchName:app.FilterSettings.SearchName});
 					    	
 					    }
